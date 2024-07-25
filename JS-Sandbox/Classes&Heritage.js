@@ -1,4 +1,4 @@
-// Clases
+// CLASES
 
 class Curso {
   constructor(titulo, dificultad) {
@@ -57,7 +57,8 @@ console.log(cursoTS);
 
 console.log(Curso.BASE_URL);
 
-// Heritage
+// HERITAGE
+
 class Usuario {
   constructor(nombre, email, password) {
     this.nombre = nombre;
@@ -105,3 +106,8 @@ class Alumno extends Usuario {
 
 const pablo = new Usuario("Pablo", "pablo@gm.com", "1234");
 const jose = new Alumno("Jose", "jose@gm.com", "1234");
+
+console.log(pablo instanceof Usuario); // true
+console.log(jose instanceof Alumno); // true
+console.log(jose instanceof Usuario); // true (porque Alumno hereda de Usuario)
+console.log(pablo instanceof Alumno); // false
