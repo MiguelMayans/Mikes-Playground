@@ -1,0 +1,9 @@
+body {
+  background: #f0f0f0;
+  color: black;
+  font-size: 2rem;
+}
+.button {
+  padding: 1rem;
+  font-size: 2rem;
+}
