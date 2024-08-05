@@ -15,14 +15,14 @@ def translator(audio_file):
 
     try:
         model = whisper.load_model("base")
-        result = model.transcribe(audio_file)
+        result = model.transcribe(audio_file, fp16=False)
         transcription = result["text"]
 
     except Exception as e:
         raise gr.Error(f"An error occured transcribing the audio: {e}")
     
     try:
-        en_transciption = Translator(to_lang="en").translate(transcription)
+        en_transciption = Translator(from_lang="es", to_lang="en").translate(transcription)
 
     except Exception as e:
         raise gr.Error(f"An error occured translating the text: {e}")
@@ -56,7 +56,7 @@ web = gr.Interface(
     fn=translator,
     inputs=gr.Audio(sources=["microphone"],
                     type="filepath"),
-    outputs=[gr.Audio],
+    outputs=[gr.Audio()],
     title="Audio Translator",
     description="Voice Transalator made with Brais Tutorial on Youtube",
 )
