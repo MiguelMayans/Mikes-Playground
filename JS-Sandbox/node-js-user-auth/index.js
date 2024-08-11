@@ -7,7 +7,7 @@ const app = express()
 app.use(express.json())
 
 app.get('/', (req, res) => {
-  res.send('Working...')
+  res.send('Server now working...')
 })
 
 app.get('/protected', (req, res) => {})
