@@ -4,10 +4,12 @@ import { UserRespository } from './user-respository.js'
 
 const app = express()
 
+app.set('view engine', 'ejs')
+
 app.use(express.json())
 
 app.get('/', (req, res) => {
-  res.send('Server now working...')
+  res.render('protected', { username: 'Miky' })
 })
 
 app.get('/protected', (req, res) => {})
