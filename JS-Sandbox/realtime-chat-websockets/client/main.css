@@ -1,0 +1,62 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Courier New", Courier, monospace;
+  display: grid;
+  place-content: center;
+  height: 100vh;
+  padding: 36px;
+  grid-template-rows: 1fr;
+}
+
+#chat {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  overflow: hidden;
+  width: 350px;
+  height: 100%;
+  position: relative;
+}
+
+#form {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  border-top: 1px solid #ccc;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+
+#input {
+  width: 80%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 999px;
+  outline: none;
+}
+
+#form > button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 999px;
+  background-color: #007bff;
+  color: #fff;
+  cursor: pointer;
+  margin: 0.5em;
+  margin-left: 0.5em;
+}
+
+#messages {
+  list-style-type: none;
+  padding: 12px;
+  margin: 0;
+  overflow-y: auto;
+  height: calc(100% - 48px);
+}
