@@ -1,5 +1,3 @@
-"""this is the main file for the audio translator project"""
-
 import gradio as gr
 import whisper
 from translate import Translator
@@ -30,11 +28,11 @@ def translator(audio_file):
     client = ElevenLabs(api_key=ELEVEN_LABS_API_KEY)
 
     response = client.text_to_speech.convert(
-        voice_id="pNInz6obpgDQGcFmaJgB",  # Adam pre-made voice
+        voice_id="pNInz6obpgDQGcFmaJgB",
         optimize_streaming_latency="0",
         output_format="mp3_22050_32",
         text=en_transciption,
-        model_id="eleven_turbo_v2",  # use the turbo model for low latency, for other languages use the `eleven_multilingual_v2`
+        model_id="eleven_turbo_v2",
         voice_settings=VoiceSettings(
             stability=0.0,
             similarity_boost=1.0,
