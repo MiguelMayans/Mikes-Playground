@@ -3,6 +3,10 @@ section {
   margin: 0 auto;
 }
 
+body {
+  font-size: 1rem;
+}
+
 img {
   border-radius: 50%;
 }
