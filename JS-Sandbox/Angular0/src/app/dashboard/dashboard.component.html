@@ -1,3 +1,4 @@
 <p>dashboard works!</p>
-<button (click)="handleClick()">Click me to update!</button>
-<app-dashboard-child [text]="text" />
+<h2>Parent:{{ text }}</h2>
+<button (click)="handleClick()">Change Text from Parent</button>
+<app-dashboard-child [(text)]="text" />

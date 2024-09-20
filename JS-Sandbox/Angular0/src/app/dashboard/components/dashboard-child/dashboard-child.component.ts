@@ -4,6 +4,8 @@ import {
   Input,
   OnInit,
   SimpleChanges,
+  Output,
+  EventEmitter,
 } from '@angular/core';
 
 @Component({
@@ -16,6 +18,7 @@ import {
 })
 export class DashboardChildComponent implements OnInit {
   @Input() text: string = '';
+  @Output() textChange = new EventEmitter<string>();
 
   ngOnChanges(changes: SimpleChanges): void {
     console.log('DashboardChildComponent changes', changes);
@@ -23,5 +26,10 @@ export class DashboardChildComponent implements OnInit {
 
   ngOnInit(): void {
     console.log('DashboardChildComponent initialized');
+  }
+
+  hancleClick(): void {
+    this.text = 'text change by DashboardChildComponent';
+    this.textChange.emit(this.text);
   }
 }
