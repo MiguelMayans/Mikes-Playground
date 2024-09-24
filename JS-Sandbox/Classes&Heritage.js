@@ -111,3 +111,5 @@ console.log(pablo instanceof Usuario); // true
 console.log(jose instanceof Alumno); // true
 console.log(jose instanceof Usuario); // true (porque Alumno hereda de Usuario)
 console.log(pablo instanceof Alumno); // false
+
+console.log("Triying Neovim on Ubuntu")
