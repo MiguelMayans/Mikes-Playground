@@ -11,6 +11,7 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts",
-    "nativewind-env.d.mjs"
+    "nativewind-env.d.mjs",
+    "context/GlobalProvider.js"
   ]
 }

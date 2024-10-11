@@ -1,4 +1,11 @@
-import { Client, Account, ID, Avatars, Databases } from "react-native-appwrite"
+import {
+  Client,
+  Account,
+  ID,
+  Avatars,
+  Databases,
+  Query,
+} from "react-native-appwrite"
 
 export const appwriteConfig = {
   endpoint: "https://cloud.appwrite.io/v1",
@@ -60,6 +67,24 @@ export const signIn = async (email, password) => {
     const session = await account.createSession(email, password)
 
     return session
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
+export const getCurrentUser = async () => {
+  try {
+    const currentAccount = await account.get()
+    if (!currentAccount) throw new Error("Error fetching user")
+
+    const currentUser = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.userCollectionId[Query.equal("userId", currentAccount.$id)]
+    )
+
+    if (!currentUser) throw new Error("Error fetching user")
+
+    return currentUser.documents[0]
   } catch (error) {
     throw new Error(error)
   }
