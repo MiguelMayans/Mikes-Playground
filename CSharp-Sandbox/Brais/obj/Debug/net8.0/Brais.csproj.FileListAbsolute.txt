@@ -1,0 +1,15 @@
+C:\Users\User\Desktop\Proyectos\Mikes-Playground\CSharp-Sandbox\Brais\bin\Debug\net8.0\Brais.exe
+C:\Users\User\Desktop\Proyectos\Mikes-Playground\CSharp-Sandbox\Brais\bin\Debug\net8.0\Brais.deps.json
+C:\Users\User\Desktop\Proyectos\Mikes-Playground\CSharp-Sandbox\Brais\bin\Debug\net8.0\Brais.runtimeconfig.json
+C:\Users\User\Desktop\Proyectos\Mikes-Playground\CSharp-Sandbox\Brais\bin\Debug\net8.0\Brais.dll
+C:\Users\User\Desktop\Proyectos\Mikes-Playground\CSharp-Sandbox\Brais\bin\Debug\net8.0\Brais.pdb
+C:\Users\User\Desktop\Proyectos\Mikes-Playground\CSharp-Sandbox\Brais\obj\Debug\net8.0\Brais.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\User\Desktop\Proyectos\Mikes-Playground\CSharp-Sandbox\Brais\obj\Debug\net8.0\Brais.AssemblyInfoInputs.cache
+C:\Users\User\Desktop\Proyectos\Mikes-Playground\CSharp-Sandbox\Brais\obj\Debug\net8.0\Brais.AssemblyInfo.cs
+C:\Users\User\Desktop\Proyectos\Mikes-Playground\CSharp-Sandbox\Brais\obj\Debug\net8.0\Brais.csproj.CoreCompileInputs.cache
+C:\Users\User\Desktop\Proyectos\Mikes-Playground\CSharp-Sandbox\Brais\obj\Debug\net8.0\Brais.sourcelink.json
+C:\Users\User\Desktop\Proyectos\Mikes-Playground\CSharp-Sandbox\Brais\obj\Debug\net8.0\Brais.dll
+C:\Users\User\Desktop\Proyectos\Mikes-Playground\CSharp-Sandbox\Brais\obj\Debug\net8.0\refint\Brais.dll
+C:\Users\User\Desktop\Proyectos\Mikes-Playground\CSharp-Sandbox\Brais\obj\Debug\net8.0\Brais.pdb
+C:\Users\User\Desktop\Proyectos\Mikes-Playground\CSharp-Sandbox\Brais\obj\Debug\net8.0\Brais.genruntimeconfig.cache
+C:\Users\User\Desktop\Proyectos\Mikes-Playground\CSharp-Sandbox\Brais\obj\Debug\net8.0\ref\Brais.dll
