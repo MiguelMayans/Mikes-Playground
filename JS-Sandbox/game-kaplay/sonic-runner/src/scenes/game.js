@@ -6,6 +6,8 @@ import k from "../kaplayCtx"
 export default function game() {
   k.setGravity(3100) // se necesita el componente body en los objetso para que funcione
 
+  const cityMusic = k.play("city", { loop: true, volume: 0.2 })
+
   const bgPieceWidth = 1920
   const bgPieces = [
     k.add([k.sprite("chemical-bg"), k.pos(0, 0), k.scale(2), k.opacity(0.8)]),
@@ -39,6 +41,14 @@ export default function game() {
     k.body({ isStatic: true }),
   ])
 
+  let score = 0
+  let scoreMultiplier = 0
+
+  const scoreText = k.add([
+    k.text(`SCORE: 0`, { font: "mania", size: 72 }),
+    k.pos(20, 20),
+  ])
+
   const sonic = makeSonic(k.vec2(200, 745))
   sonic.setControls()
   sonic.setEvents()
@@ -50,11 +60,31 @@ export default function game() {
       sonic.play("jump")
       sonic.jump()
       k.play("jump", { volume: 0.5 })
+      scoreMultiplier += 1
+      score += 50 * scoreMultiplier
+      scoreText.text = `SCORE: ${score}`
+      if (scoreMultiplier === 1) sonic.ringCollectUI.text = "+50"
+      if (scoreMultiplier > 1) sonic.ringCollectUI.text = `x${scoreMultiplier}`
+      k.wait(1, () => {
+        sonic.ringCollectUI.text = ""
+      })
       return
     }
 
     k.play("hurt", { volume: 0.5 })
-    k.go("game-over")
+    k.setData("current-score", score)
+    k.go("gameover", cityMusic)
+  })
+
+  sonic.onCollide("ring", (ring) => {
+    k.play("ring", { volume: 0.5 })
+    k.destroy(ring)
+    score += 10
+    scoreText.text = `SCORE: ${score}`
+    sonic.ringCollectUI.text = "+10"
+    k.wait(1, () => {
+      sonic.ringCollectUI.text = ""
+    })
   })
 
   // recursive function to spawn motobugs at random intervals infinitely
@@ -96,6 +126,8 @@ export default function game() {
   spawnRing()
 
   k.onUpdate(() => {
+    if (sonic.isGrounded()) scoreMultiplier = 0
+
     if (bgPieces[1].pos.x < 0) {
       bgPieces[0].moveTo(bgPieces[1].pos.x + bgPieceWidth * 2, 0)
       bgPieces.push(bgPieces.shift())
