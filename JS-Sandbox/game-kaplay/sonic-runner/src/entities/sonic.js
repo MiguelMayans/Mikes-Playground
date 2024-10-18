@@ -7,5 +7,25 @@ export function makeSonic(pos) {
     k.area(), // hitbox
     k.anchor("center"),
     k.pos(pos),
+    k.body({ jumpForce: 1700 }),
+    {
+      // estos métodos los nombramos nosotros
+      setControls() {
+        k.onButtonPress("jump", () => {
+          if (this.isGrounded()) {
+            this.play("jump")
+            this.jump()
+            k.play("jump", { volume: 0.5 })
+          }
+        })
+      },
+      setEvents() {
+        this.onGround(() => {
+          this.play("run")
+        })
+      },
+    },
   ])
+
+  return sonic
 }

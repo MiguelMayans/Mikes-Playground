@@ -1,4 +1,5 @@
 import k from "./kaplayCtx"
+import game from "./scenes/game"
 import mainMenu from "./scenes/mainMenu"
 
 k.loadSprite("chemical-bg", "graphics/chemical-bg.png") // no hace ponerle el public/graphics en vite
@@ -40,7 +41,7 @@ k.loadSound("city", "sounds/city.mp3")
 
 k.scene("main-menu", mainMenu) // no la llamo con () porque no quiero que se ejecute
 
-k.scene("game", () => {})
+k.scene("game", game)
 
 k.scene("gameover", () => {})
 
