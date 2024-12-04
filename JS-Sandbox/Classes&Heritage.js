@@ -25,7 +25,7 @@ class Curso {
     if (nuevaDificultad >= 0 && nuevaDificultad <= 5) {
       this._dificultad = nuevaDificultad;
     } else {
-      return null;
+      return;
     }
 
     console.log("Setter");
@@ -112,4 +112,4 @@ console.log(jose instanceof Alumno); // true
 console.log(jose instanceof Usuario); // true (porque Alumno hereda de Usuario)
 console.log(pablo instanceof Alumno); // false
 
-console.log("Triying Neovim on Ubuntu")
+console.log("Triying Neovim on Ubuntu");
