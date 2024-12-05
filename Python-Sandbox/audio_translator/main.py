@@ -9,6 +9,7 @@ config = dotenv_values(".env")
 
 ELEVEN_LABS_API_KEY = config["ELEVEN_LABS_API_KEY"]
 
+
 def translator(audio_file):
 
     try:
@@ -18,13 +19,14 @@ def translator(audio_file):
 
     except Exception as e:
         raise gr.Error(f"An error occured transcribing the audio: {e}")
-    
+
     try:
-        en_transciption = Translator(from_lang="es", to_lang="en").translate(transcription)
+        en_transciption = Translator(
+            from_lang="es", to_lang="en").translate(transcription)
 
     except Exception as e:
         raise gr.Error(f"An error occured translating the text: {e}")
-    
+
     client = ElevenLabs(api_key=ELEVEN_LABS_API_KEY)
 
     response = client.text_to_speech.convert(
@@ -49,6 +51,7 @@ def translator(audio_file):
                 f.write(chunk)
 
     return save_file_path
+
 
 web = gr.Interface(
     fn=translator,
