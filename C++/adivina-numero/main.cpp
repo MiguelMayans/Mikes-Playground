@@ -4,7 +4,7 @@ int main() {
     int numero_secreto = 42;
     int intento;
 
-    std::cout << "Adivina el número: ";
+    std::cout << "Holy Miky, vamos a adivinar el número? ";
     std::cin >> intento;
 
     if (intento == numero_secreto) {
