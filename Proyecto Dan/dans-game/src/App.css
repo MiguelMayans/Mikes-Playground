@@ -1,0 +1,353 @@
+/* Playful theme and layout */
+@import url("https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;700&display=swap");
+
+:root {
+  --bg-1: #06d6a0;
+  --bg-2: #4cc9f0;
+  --card: #ffffff;
+  --accent: #ff4757;
+  --accent-2: #ffd166;
+  --shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
+  --key-shadow: 0 14px 30px rgba(0, 0, 0, 0.18);
+  --radius: 22px;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  font-family:
+    "Baloo 2",
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    Arial;
+  background: var(--bg-1); /* flat vivid background */
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #111;
+}
+
+/* Enhanced feedback: confetti and banner (overlay) */
+.feedback-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 140;
+}
+.celebrate-banner {
+  display: inline-block;
+  padding: clamp(36px, 6vw, 80px) clamp(48px, 8vw, 120px);
+  font-size: clamp(48px, 6vw, 84px);
+  background: #fff;
+  border: 18px solid #000;
+  border-radius: 26px;
+  color: var(--accent);
+  font-weight: 900;
+  letter-spacing: 1px;
+  box-shadow: 0 40px 90px rgba(0, 0, 0, 0.28);
+  transform: translateY(20px) scale(0.82);
+  animation: banner-pop 900ms cubic-bezier(0.2, 0.9, 0.2, 1) forwards;
+  text-align: center;
+  pointer-events: none;
+}
+
+@keyframes banner-pop {
+  0% {
+    transform: translateY(20px) scale(0.82);
+    opacity: 0;
+  }
+  60% {
+    transform: translateY(-8px) scale(1.06);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.confetti-container {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -8px;
+  bottom: 0;
+  overflow: visible;
+  pointer-events: none;
+}
+.confetti-piece {
+  position: absolute;
+  top: 8px;
+  border-radius: 3px;
+  opacity: 1;
+  transform-origin: center;
+  animation: confetti-fall 2200ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(0) rotate(0);
+    opacity: 1;
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(420px) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+.app-root {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* more top padding so card has breathing room */
+  padding: 64px 24px 24px 24px;
+}
+.card {
+  background: var(--card);
+  border-radius: 26px;
+  /* more interior space so content breathes */
+  padding: 88px 56px 56px 56px;
+  /* slightly wider so long words and larger keys fit comfortably */
+  width: 1500px;
+  max-width: 96%;
+  box-sizing: border-box;
+  box-shadow: var(--shadow);
+  border: 14px solid #000; /* bold black comic border */
+  position: relative;
+  overflow: visible;
+  /* Try to avoid subpixel hairline gaps by adjusting clip and forcing GPU compositing */
+  background-clip: padding-box;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  outline: 1px solid rgba(0, 0, 0, 0); /* force antialiasing to avoid hairlines */
+}
+
+.decor-blob {
+  position: absolute;
+  left: -20px;
+  top: -40px;
+  width: 140%;
+  height: 120px;
+  pointer-events: none;
+}
+.mascot {
+  font-size: 44px;
+  width: 800px;
+  height: 96px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 28px;
+  background: var(--accent-2);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.2);
+  border: 8px solid #000;
+  color: #111;
+  font-weight: 900;
+  z-index: 6;
+}
+
+.mascot-top {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  /* less negative pull so the mascot doesn't crowd the top */
+  margin-top: -18px;
+  margin-bottom: 6px;
+  pointer-events: none;
+}
+.mascot-emoji {
+  margin-left: 8px;
+}
+
+/* Game prototype styles (cartoon) */
+.game-root {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  align-items: center;
+  padding: 24px;
+}
+.game-header {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  width: 100%;
+  justify-content: center;
+  position: relative;
+  margin-bottom: 18px;
+}
+.progress {
+  font-size: 20px;
+}
+.prompt {
+  font-size: 40px;
+  margin: 0;
+  color: var(--accent);
+  text-align: center;
+  line-height: 1;
+}
+
+.word {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 36px;
+  justify-content: center;
+  flex-wrap: nowrap; /* keep letters on single line */
+  /* Let animated letters overflow visually instead of forcing a scrollbar */
+  overflow-x: visible;
+}
+.letter {
+  /* responsive sizing so long words don't overflow */
+  min-width: clamp(48px, 9vw, 120px);
+  height: clamp(72px, 14vw, 140px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(24px, 5.5vw, 60px);
+  border: 14px solid #000; /* bold comic stroke */
+  border-radius: 26px;
+  background: #fff;
+  box-shadow: 0 22px 44px rgba(0, 0, 0, 0.22);
+  padding: 0 12px;
+  transition: transform 160ms ease;
+  will-change: transform;
+}
+
+.word-art {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+.word-art img {
+  width: clamp(48px, 10vw, 120px);
+  height: auto;
+  /* Show the source image as-is (no added frame or shadow) */
+  border-radius: 0;
+  border: none;
+  background: transparent;
+  padding: 0;
+  box-shadow: none;
+  pointer-events: none; /* image is decorative, not interactive */
+}
+.letter.correct {
+  background: #bff7bd;
+  border-color: #000;
+}
+.letter.wrong {
+  background: #ffd2d2;
+  border-color: #000;
+  transform: translateY(-6px) rotate(-6deg);
+}
+
+.osk {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 18px;
+  max-width: 1140px;
+  margin-top: 28px;
+}
+.osk-key {
+  width: 88px;
+  height: 88px;
+  border-radius: 18px;
+  font-size: 20px;
+  border: 8px solid #000; /* black key outline */
+  background: var(--card);
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #111;
+  font-weight: 900;
+  transition: transform 120ms cubic-bezier(0.2, 0.9, 0.2, 1);
+}
+.osk-key:active {
+  transform: translateY(2px) scale(0.98);
+}
+
+.confetti {
+  display: flex;
+  gap: 8px;
+  font-size: 22px;
+}
+.celebrate {
+  color: #ff6b6b;
+  text-shadow: 0 8px 20px rgba(255, 107, 107, 0.12);
+  margin: 0;
+}
+
+.osk-key.key-0 {
+  background: #ffd166;
+}
+.osk-key.key-1 {
+  background: #ff6b6b;
+}
+.osk-key.key-2 {
+  background: #06d6a0;
+}
+.osk-key.key-3 {
+  background: #4cc9f0;
+}
+.osk-key.key-4 {
+  background: #ffd166;
+}
+.osk-key.key-5 {
+  background: #ff4757;
+}
+
+.feedback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+}
+.help {
+  color: #666;
+  font-size: 14px;
+}
+
+@media (max-width: 640px) {
+  .card {
+    padding: 32px;
+    border-width: 8px;
+  }
+  .letter {
+    min-width: 64px;
+    height: 80px;
+    font-size: 36px;
+    border-width: 8px;
+  }
+  .osk-key {
+    width: 60px;
+    height: 60px;
+    font-size: 16px;
+    border-width: 6px;
+  }
+  .mascot {
+    font-size: 32px;
+    width: 64px;
+    height: 64px;
+    top: -30px;
+  }
+  .prompt {
+    font-size: 28px;
+  }
+}
