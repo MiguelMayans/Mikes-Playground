@@ -1,0 +1,15 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Stick -->
+  <rect x="95" y="120" width="10" height="65" rx="5" fill="#D2B48C" stroke="#8B7355" stroke-width="2"/>
+  
+  <!-- Candy base circle -->
+  <circle cx="100" cy="100" r="40" fill="#FF4500" stroke="#DC143C" stroke-width="3"/>
+  
+  <!-- Spiral stripes -->
+  <path d="M 100 60 A 40 40 0 0 1 100 140" stroke="#FFFFFF" stroke-width="8" fill="none" stroke-linecap="round"/>
+  <path d="M 100 70 A 30 30 0 0 1 100 130" stroke="#FFFFFF" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <path d="M 100 80 A 20 20 0 0 1 100 120" stroke="#FFFFFF" stroke-width="4" fill="none" stroke-linecap="round"/>
+  
+  <!-- Shine -->
+  <ellipse cx="75" cy="75" rx="12" ry="14" fill="#FFFF99" opacity="0.6"/>
+</svg>

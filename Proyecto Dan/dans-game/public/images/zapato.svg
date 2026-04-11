@@ -1,0 +1,17 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Shoe body -->
+  <path d="M 50 120 L 60 90 Q 60 60 90 55 L 140 55 Q 150 60 155 80 L 145 130 Q 145 145 130 150 L 70 150 Q 50 145 50 120 Z" fill="#FF4500" stroke="#DC143C" stroke-width="2.5"/>
+  
+  <!-- Shoe sole -->
+  <ellipse cx="100" cy="150" rx="50" ry="8" fill="#8B4513" stroke="#654321" stroke-width="1.5"/>
+  
+  <!-- Shoe opening -->
+  <ellipse cx="85" cy="85" rx="25" ry="18" fill="#FFA500" stroke="#FF4500" stroke-width="1"/>
+  
+  <!-- Laces -->
+  <line x1="75" y1="70" x2="95" y2="100" stroke="#FFFFFF" stroke-width="2"/>
+  <line x1="95" y1="70" x2="75" y2="100" stroke="#FFFFFF" stroke-width="2"/>
+  
+  <!-- Shine -->
+  <ellipse cx="110" cy="75" rx="15" ry="10" fill="#FFB347" opacity="0.5"/>
+</svg>

@@ -1,0 +1,30 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Body -->
+  <ellipse cx="100" cy="120" rx="35" ry="40" fill="#4169E1" stroke="#1E40AF" stroke-width="2"/>
+  
+  <!-- Head -->
+  <circle cx="100" cy="70" r="25" fill="#4169E1" stroke="#1E40AF" stroke-width="2"/>
+  
+  <!-- Eye -->
+  <circle cx="110" cy="65" r="6" fill="#FFFFFF" stroke="#1E40AF" stroke-width="1"/>
+  <circle cx="110" cy="65" r="3" fill="#000000"/>
+  
+  <!-- Beak -->
+  <polygon points="120,70 135,68 120,75" fill="#FF6347" stroke="#DC143C" stroke-width="1"/>
+  
+  <!-- Wing -->
+  <ellipse cx="85" cy="115" rx="20" ry="30" fill="#1E40AF" stroke="#1E40AF" stroke-width="2"/>
+  
+  <!-- Tail feathers -->
+  <path d="M 65 120 Q 40 110 30 125" stroke="#1E40AF" stroke-width="8" fill="none" stroke-linecap="round"/>
+  
+  <!-- Left leg -->
+  <path d="M 90 160 L 90 175" stroke="#FF6347" stroke-width="3" stroke-linecap="round"/>
+  <path d="M 90 175 L 85 180" stroke="#FF6347" stroke-width="2" stroke-linecap="round"/>
+  <path d="M 90 175 L 95 180" stroke="#FF6347" stroke-width="2" stroke-linecap="round"/>
+  
+  <!-- Right leg -->
+  <path d="M 110 160 L 110 175" stroke="#FF6347" stroke-width="3" stroke-linecap="round"/>
+  <path d="M 110 175 L 105 180" stroke="#FF6347" stroke-width="2" stroke-linecap="round"/>
+  <path d="M 110 175 L 115 180" stroke="#FF6347" stroke-width="2" stroke-linecap="round"/>
+</svg>

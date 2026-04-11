@@ -1,7 +1,10 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import OnScreenKeyboard from "./OnScreenKeyboard";
 import Feedback from "./Feedback";
 import { words } from "../data/words";
+import { playCorrectNote, playWrongSound } from "../utils/sounds";
+
+type Spark = { id: number; letterIndex: number; offset: number };
 
 function pickRandom() {
   const list = words.level1;
@@ -12,13 +15,18 @@ export default function Game() {
   const [word, setWord] = useState<string>(() => pickRandom());
   const [pos, setPos] = useState<number>(0);
   const [wrong, setWrong] = useState<boolean>(false);
+  const [wrongIndex, setWrongIndex] = useState<number | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
   const [poppedIndex, setPoppedIndex] = useState<number | null>(null);
+  const [sparks, setSparks] = useState<Spark[]>([]);
+  const sparkId = useRef(0);
 
   const reset = useCallback(() => {
     setWord(pickRandom());
     setPos(0);
     setWrong(false);
+    setWrongIndex(null);
+    setSparks([]);
     setSuccess(false);
   }, []);
 
@@ -27,85 +35,45 @@ export default function Game() {
       if (success) return;
       const expected = word[pos];
       if (!expected) return;
+
       if (k === expected) {
+        // Play xylophone note — rises with each correct letter typed
+        playCorrectNote(pos);
+
         const next = pos + 1;
         setPos(next);
         setWrong(false);
+        setWrongIndex(null);
         setPoppedIndex(next - 1);
-        // small pop animation
         setTimeout(() => setPoppedIndex(null), 240);
-        // success tone for single letter (softer)
-        try {
-          function createAudioContext(): AudioContext | null {
-            const win = window as unknown as {
-              AudioContext?: typeof AudioContext;
-              webkitAudioContext?: typeof AudioContext;
-            };
-            const C = win.AudioContext ?? win.webkitAudioContext;
-            if (!C) return null;
-            try {
-              return new C();
-            } catch {
-              return null;
-            }
-          }
-          const ctx = createAudioContext();
-          if (ctx) {
-            const now = ctx.currentTime;
-            const osc = ctx.createOscillator();
-            const g = ctx.createGain();
-            osc.type = "sine";
-            osc.frequency.setValueAtTime(880, now);
-            g.gain.setValueAtTime(0.001, now);
-            g.gain.exponentialRampToValueAtTime(0.18, now + 0.01);
-            osc.connect(g);
-            g.connect(ctx.destination);
-            osc.start(now);
-            osc.stop(now + 0.09);
-          }
-        } catch {
-          /* ignore audio errors */
-        }
+
+        // Burst 4 sparkle particles from the just-typed letter
+        const newSparks: Spark[] = Array.from({ length: 4 }, () => ({
+          id: sparkId.current++,
+          letterIndex: pos,
+          offset: Math.floor(Math.random() * 44) - 22,
+        }));
+        setSparks((prev) => [...prev, ...newSparks]);
+        setTimeout(() => {
+          setSparks((prev) =>
+            prev.filter((s) => !newSparks.some((n) => n.id === s.id)),
+          );
+        }, 660);
+
         if (next >= word.length) {
           setSuccess(true);
-          // keep the success state a bit longer so the banner is visible
           setTimeout(() => reset(), 2400);
         }
       } else {
+        // Cartoon boing — funny, not scary
+        playWrongSound();
+
         setWrong(true);
-        // wrong tone and brief shake
-        try {
-          function createAudioContext(): AudioContext | null {
-            const win = window as unknown as {
-              AudioContext?: typeof AudioContext;
-              webkitAudioContext?: typeof AudioContext;
-            };
-            const C = win.AudioContext ?? win.webkitAudioContext;
-            if (!C) return null;
-            try {
-              return new C();
-            } catch {
-              return null;
-            }
-          }
-          const ctx = createAudioContext();
-          if (ctx) {
-            const now = ctx.currentTime;
-            const o = ctx.createOscillator();
-            const g = ctx.createGain();
-            o.type = "sawtooth";
-            o.frequency.setValueAtTime(220, now);
-            g.gain.setValueAtTime(0.001, now);
-            g.gain.exponentialRampToValueAtTime(0.22, now + 0.01);
-            o.connect(g);
-            g.connect(ctx.destination);
-            o.start(now);
-            o.stop(now + 0.12);
-          }
-        } catch {
-          // viva el vive coding
-        }
-        setTimeout(() => setWrong(false), 350);
+        setWrongIndex(pos);
+        setTimeout(() => {
+          setWrong(false);
+          setWrongIndex(null);
+        }, 400);
       }
     },
     [pos, word, reset, success],
@@ -124,9 +92,6 @@ export default function Game() {
   return (
     <div className="app-root">
       <div className="card">
-        {/* decorative blob removed to avoid visual clutter */}
-
-        {/* mascot moved outside the header so it doesn't overlap the title */}
         <div className="mascot-top">
           <div className="mascot">
             El juego de las palabras con TOTO{" "}
@@ -162,6 +127,25 @@ export default function Game() {
                     return (
                       <span key={i} className={classes.join(" ")}>
                         {ch.toUpperCase()}
+                        {/* Thinking emoji on wrong keypress */}
+                        {wrongIndex === i && (
+                          <span className="wrong-emoji" aria-hidden="true">
+                            🙈
+                          </span>
+                        )}
+                        {/* Sparkle particles float up from each correct letter */}
+                        {sparks
+                          .filter((s) => s.letterIndex === i)
+                          .map((s) => (
+                            <span
+                              key={s.id}
+                              className="spark"
+                              aria-hidden="true"
+                              style={{ left: `calc(50% + ${s.offset}px)` }}
+                            >
+                              ✨
+                            </span>
+                          ))}
                       </span>
                     );
                   })}

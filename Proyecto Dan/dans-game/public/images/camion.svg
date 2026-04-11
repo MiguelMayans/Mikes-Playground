@@ -1,0 +1,24 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Truck bed -->
+  <rect x="70" y="90" width="95" height="55" fill="#FF4500" stroke="#DC143C" stroke-width="2.5" rx="3"/>
+  
+  <!-- Truck bed sides line -->
+  <line x1="70" y1="110" x2="165" y2="110" stroke="#DC143C" stroke-width="1.5"/>
+  
+  <!-- Cabin -->
+  <rect x="35" y="100" width="40" height="45" fill="#FF4500" stroke="#DC143C" stroke-width="2.5" rx="2"/>
+  
+  <!-- Windshield -->
+  <rect x="38" y="103" width="30" height="18" fill="#87CEEB" stroke="#1E90FF" stroke-width="1.5" rx="2"/>
+  
+  <!-- First wheel -->
+  <circle cx="65" cy="155" r="12" fill="#333333" stroke="#000" stroke-width="2"/>
+  <circle cx="65" cy="155" r="6" fill="#888888"/>
+  
+  <!-- Second wheel -->
+  <circle cx="145" cy="155" r="12" fill="#333333" stroke="#000" stroke-width="2"/>
+  <circle cx="145" cy="155" r="6" fill="#888888"/>
+  
+  <!-- Bumper -->
+  <rect x="32" y="145" width="6" height="15" fill="#FFD700" stroke="#DAA520" stroke-width="1"/>
+</svg>

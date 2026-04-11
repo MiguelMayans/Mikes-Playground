@@ -1,0 +1,22 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Door frame -->
+  <rect x="45" y="40" width="110" height="130" fill="#8B4513" stroke="#654321" stroke-width="3"/>
+  
+  <!-- Door -->
+  <rect x="50" y="45" width="100" height="120" fill="#A0522D" stroke="#654321" stroke-width="2" rx="3"/>
+  
+  <!-- Door panels -->
+  <rect x="52" y="47" width="46" height="58" fill="#C19A6B" stroke="#654321" stroke-width="1"/>
+  <rect x="102" y="47" width="46" height="58" fill="#C19A6B" stroke="#654321" stroke-width="1"/>
+  <rect x="52" y="107" width="46" height="56" fill="#C19A6B" stroke="#654321" stroke-width="1"/>
+  <rect x="102" y="107" width="46" height="56" fill="#C19A6B" stroke="#654321" stroke-width="1"/>
+  
+  <!-- Door handle -->
+  <circle cx="135" cy="105" r="6" fill="#FFD700" stroke="#DAA520" stroke-width="1"/>
+  
+  <!-- Door knob detail -->
+  <circle cx="135" cy="105" r="3" fill="#DAA520"/>
+  
+  <!-- Frame lines -->
+  <line x1="52" y1="55" x2="98" y2="55" stroke="#8B4513" stroke-width="1.5"/>
+</svg>

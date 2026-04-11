@@ -1,0 +1,28 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Left lens frame -->
+  <circle cx="70" cy="90" r="28" fill="#87CEEB" stroke="#333333" stroke-width="3"/>
+  
+  <!-- Right lens frame -->
+  <circle cx="130" cy="90" r="28" fill="#87CEEB" stroke="#333333" stroke-width="3"/>
+  
+  <!-- Left lens -->
+  <circle cx="70" cy="90" r="24" fill="#E0FFFF" stroke="#1E90FF" stroke-width="1"/>
+  
+  <!-- Right lens -->
+  <circle cx="130" cy="90" r="24" fill="#E0FFFF" stroke="#1E90FF" stroke-width="1"/>
+  
+  <!-- Bridge -->
+  <rect x="95" y="82" width="10" height="16" fill="#333333" stroke="#000" stroke-width="1" rx="2"/>
+  
+  <!-- Left arm -->
+  <path d="M 45 85 L 30 95" stroke="#333333" stroke-width="4" stroke-linecap="round" fill="none"/>
+  
+  <!-- Right arm -->
+  <path d="M 155 85 L 170 95" stroke="#333333" stroke-width="4" stroke-linecap="round" fill="none"/>
+  
+  <!-- Shine on left -->
+  <ellipse cx="55" cy="75" rx="8" ry="10" fill="#FFFFFF" opacity="0.6"/>
+  
+  <!-- Shine on right -->
+  <ellipse cx="115" cy="75" rx="8" ry="10" fill="#FFFFFF" opacity="0.6"/>
+</svg>

@@ -1,0 +1,16 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Stick -->
+  <rect x="95" y="120" width="10" height="70" rx="5" fill="#D2B48C" stroke="#8B7355" stroke-width="2"/>
+  
+  <!-- Candy circle -->
+  <circle cx="100" cy="100" r="45" fill="#FF69B4" stroke="#C71585" stroke-width="3"/>
+  
+  <!-- Stripes -->
+  <circle cx="100" cy="100" r="35" fill="none" stroke="#FFFFFF" stroke-width="5" stroke-dasharray="10,10"/>
+  
+  <!-- Inner circle -->
+  <circle cx="100" cy="100" r="25" fill="#FF1493" stroke="#C71585" stroke-width="1.5"/>
+  
+  <!-- Shine -->
+  <ellipse cx="75" cy="70" rx="15" ry="18" fill="#FFFFFF" opacity="0.6"/>
+</svg>

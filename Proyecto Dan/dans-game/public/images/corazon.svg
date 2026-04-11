@@ -1,0 +1,13 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Left hump -->
+  <circle cx="75" cy="80" r="28" fill="#FF1493" stroke="#C71585" stroke-width="2.5"/>
+  
+  <!-- Right hump -->
+  <circle cx="125" cy="80" r="28" fill="#FF1493" stroke="#C71585" stroke-width="2.5"/>
+  
+  <!-- Main heart point -->
+  <path d="M 50 115 L 100 155 L 150 115 Q 150 85 125 65 Q 100 50 75 65 Q 50 85 50 115" fill="#FF1493" stroke="#C71585" stroke-width="2.5"/>
+  
+  <!-- Shine -->
+  <ellipse cx="85" cy="85" rx="12" ry="15" fill="#FF69B4" opacity="0.6"/>
+</svg>

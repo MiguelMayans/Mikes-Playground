@@ -1,0 +1,24 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Cake base -->
+  <rect x="50" y="90" width="100" height="70" rx="5" fill="#D2691E" stroke="#8B4513" stroke-width="2"/>
+  
+  <!-- First frosting layer -->
+  <path d="M 50 90 Q 50 60 100 50 Q 150 60 150 90" fill="#FFB6C1" stroke="#FF69B4" stroke-width="2"/>
+  
+  <!-- Second frosting layer -->
+  <path d="M 60 75 Q 60 55 100 45 Q 140 55 140 75" fill="#FFB6FA" stroke="#DA70D6" stroke-width="2"/>
+  
+  <!-- Top frosting swirl -->
+  <path d="M 70 50 Q 85 35 100 40 Q 115 35 130 50" fill="#FFC0CB" stroke="#FF1493" stroke-width="1.5"/>
+  
+  <!-- Candle -->
+  <rect x="97" y="25" width="6" height="25" fill="#FFE4B5" stroke="#DAA520" stroke-width="1"/>
+  
+  <!-- Flame -->
+  <path d="M 100 20 Q 95 10 100 5 Q 105 10 100 20" fill="#FF4500" stroke="#FF8C00" stroke-width="1.5"/>
+  
+  <!-- Decoration dots -->
+  <circle cx="75" cy="100" r="4" fill="#FF69B4"/>
+  <circle cx="100" cy="100" r="4" fill="#FF69B4"/>
+  <circle cx="125" cy="100" r="4" fill="#FF69B4"/>
+</svg>

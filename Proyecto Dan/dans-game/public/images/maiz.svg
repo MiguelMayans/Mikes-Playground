@@ -1,0 +1,30 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Corn cob -->
+  <ellipse cx="100" cy="100" rx="28" ry="50" fill="#D2691E" stroke="#8B4513" stroke-width="2.5"/>
+  
+  <!-- Corn kernels - top rows -->
+  <circle cx="75" cy="60" r="6" fill="#FFD700" stroke="#DAA520" stroke-width="1"/>
+  <circle cx="90" cy="55" r="6" fill="#FFD700" stroke="#DAA520" stroke-width="1"/>
+  <circle cx="105" cy="55" r="6" fill="#FFD700" stroke="#DAA520" stroke-width="1"/>
+  <circle cx="120" cy="60" r="6" fill="#FFD700" stroke="#DAA520" stroke-width="1"/>
+  
+  <!-- Corn kernels - middle rows -->
+  <circle cx="70" cy="75" r="6" fill="#FFD700" stroke="#DAA520" stroke-width="1"/>
+  <circle cx="85" cy="70" r="6" fill="#FFD700" stroke="#DAA520" stroke-width="1"/>
+  <circle cx="100" cy="68" r="6" fill="#FFD700" stroke="#DAA520" stroke-width="1"/>
+  <circle cx="115" cy="70" r="6" fill="#FFD700" stroke="#DAA520" stroke-width="1"/>
+  <circle cx="130" cy="75" r="6" fill="#FFD700" stroke="#DAA520" stroke-width="1"/>
+  
+  <!-- Corn kernels - lower middle rows -->
+  <circle cx="72" cy="90" r="6" fill="#FFD700" stroke="#DAA520" stroke-width="1"/>
+  <circle cx="88" cy="88" r="6" fill="#FFD700" stroke="#DAA520" stroke-width="1"/>
+  <circle cx="103" cy="85" r="6" fill="#FFD700" stroke="#DAA520" stroke-width="1"/>
+  <circle cx="118" cy="88" r="6" fill="#FFD700" stroke="#DAA520" stroke-width="1"/>
+  <circle cx="128" cy="90" r="6" fill="#FFD700" stroke="#DAA520" stroke-width="1"/>
+  
+  <!-- Husk leaves -->
+  <path d="M 65 125 Q 50 140 55 160" stroke="#228B22" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M 135 125 Q 150 140 145 160" stroke="#228B22" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M 75 135 Q 60 155 70 170" stroke="#32CD32" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M 125 135 Q 140 155 130 170" stroke="#32CD32" stroke-width="3" fill="none" stroke-linecap="round"/>
+</svg>

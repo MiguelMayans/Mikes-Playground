@@ -1,0 +1,16 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Bell body -->
+  <path d="M 65 80 Q 65 50 100 45 Q 135 50 135 80 L 130 140 Q 130 155 100 160 Q 70 155 70 140 Z" fill="#FFD700" stroke="#DAA520" stroke-width="2.5"/>
+  
+  <!-- Bell opening -->
+  <ellipse cx="100" cy="80" rx="35" ry="12" fill="none" stroke="#DAA520" stroke-width="2"/>
+  
+  <!-- Clapper -->
+  <circle cx="100" cy="130" r="8" fill="#FF6347" stroke="#DC143C" stroke-width="1.5"/>
+  
+  <!-- Top handle -->
+  <path d="M 80 50 Q 100 35 120 50" fill="none" stroke="#DAA520" stroke-width="3" stroke-linecap="round"/>
+  
+  <!-- Shine -->
+  <ellipse cx="80" cy="70" rx="10" ry="18" fill="#FFFF99" opacity="0.5"/>
+</svg>
