@@ -432,11 +432,15 @@ body::after {
 
 .osk {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 14px;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
   max-width: 1140px;
   margin-top: 8px;
+}
+.osk-row {
+  display: flex;
+  gap: 14px;
 }
 .osk-key {
   width: 88px;

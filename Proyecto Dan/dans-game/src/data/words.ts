@@ -75,5 +75,45 @@ export const words = {
     { word: "mundo", img: "/images/mundo.svg" },
     { word: "sola", img: "/images/sola.svg" },
   ],
+
+  level2: [
+    // — Animales difíciles —
+    { word: "mariposa", img: "/images/mariposa.svg" },
+    { word: "pajaro", img: "/images/pajaro.svg" },
+    { word: "cocodrilo", img: "/images/cocodrilo.svg" },
+    { word: "elefante", img: "/images/elefante.svg" },
+    { word: "tortuga", img: "/images/tortuga.svg" },
+    { word: "ballena", img: "/images/ballena.svg" },
+    { word: "jirafa", img: "/images/jirafa.svg" },
+    { word: "tiburon", img: "/images/tiburon.svg" },
+    { word: "canguro", img: "/images/canguro.svg" },
+    { word: "dinosaurio", img: "/images/dinosaurio.svg" },
+    { word: "dragon", img: "/images/dragon.svg" },
+    { word: "pulpo", img: "/images/pulpo.svg" },
+    // — Comida y dulces —
+    { word: "caramelo", img: "/images/caramelo.svg" },
+    { word: "piruleta", img: "/images/piruleta.svg" },
+    { word: "helado", img: "/images/helado.svg" },
+    { word: "pastel", img: "/images/pastel.svg" },
+    { word: "maiz", img: "/images/maiz.svg" },
+    { word: "jugo", img: "/images/jugo.svg" },
+    // — Casa y objetos —
+    { word: "sombrero", img: "/images/sombrero.svg" },
+    { word: "zapato", img: "/images/zapato.svg" },
+    { word: "gafas", img: "/images/gafas.svg" },
+    { word: "puerta", img: "/images/puerta.svg" },
+    { word: "ventana", img: "/images/ventana.svg" },
+    { word: "campana", img: "/images/campana.svg" },
+    { word: "paraguas", img: "/images/paraguas.svg" },
+    // — Transporte —
+    { word: "camion", img: "/images/camion.svg" },
+    // — Naturaleza y lugares —
+    { word: "girasol", img: "/images/girasol.svg" },
+    { word: "volcan", img: "/images/volcan.svg" },
+    { word: "castillo", img: "/images/castillo.svg" },
+    { word: "cohete", img: "/images/cohete.svg" },
+    // — Emociones —
+    { word: "corazon", img: "/images/corazon.svg" },
+  ],
 };
 export default words;

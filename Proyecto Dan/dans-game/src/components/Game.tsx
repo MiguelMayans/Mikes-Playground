@@ -6,9 +6,10 @@ import { playCorrectNote, playWrongSound } from "../utils/sounds";
 
 type Spark = { id: number; letterIndex: number; offset: number };
 
+const allWords = [...words.level1, ...words.level2];
+
 function pickRandom() {
-  const list = words.level1;
-  return list[Math.floor(Math.random() * list.length)].word.toLowerCase();
+  return allWords[Math.floor(Math.random() * allWords.length)].word.toLowerCase();
 }
 
 export default function Game() {
@@ -104,7 +105,7 @@ export default function Game() {
 
         <main className="game-root">
           {(() => {
-            const entry = words.level1.find(
+            const entry = allWords.find(
               (e) => e.word.toLowerCase() === word,
             );
             return (
