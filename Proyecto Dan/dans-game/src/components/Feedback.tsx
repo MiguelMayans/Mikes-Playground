@@ -1,38 +1,44 @@
-import { useEffect, useState } from "react";
-import confetti from "canvas-confetti";
-import { playSuccessJingle } from "../utils/sounds";
+import { useEffect } from 'react';
+import confetti from 'canvas-confetti';
+import { playSuccessJingle } from '../utils/sounds';
 
 type Props = {
   success: boolean;
+  streak: number;
+  bestStreak: number;
+  totalWords: number;
+  newAchievements: string[];
 };
 
-const CONFETTI_COLORS = ["#ffd166", "#ff6b6b", "#06d6a0", "#4cc9f0", "#ff4757"];
+const CONFETTI_COLORS = ['#ffd166', '#ff6b6b', '#06d6a0', '#4cc9f0', '#ff4757'];
 
 const SUCCESS_MESSAGES = [
-  "¡Muy bien Dani!",
-  "¡Campeón! 🏆",
-  "¡Genial Dani! ⭐",
-  "¡Increíble! 🎉",
-  "¡Eres un crack, Dani! 🚀",
+  '¡Muy bien Dani!',
+  '¡Campeón! 🏆',
+  '¡Genial Dani! ⭐',
+  '¡Increíble! 🎉',
+  '¡Eres un crack, Dani! 🚀',
 ];
 
-export default function Feedback({ success }: Props) {
-  const [message, setMessage] = useState(SUCCESS_MESSAGES[0]);
+const ACHIEVEMENT_NAMES: Record<string, string> = {
+  novice: '🥉 Aprendiz',
+  expert: '🥈 Experto',
+  master: '🥇 Maestro',
+  streak_3: '🔥 Racha de 3',
+  streak_5: '⚡ Racha de 5',
+  streak_10: '🌟 Racha de 10',
+  best_streak_10: '🏆 Mejor racha 10',
+};
+
+export default function Feedback({ success, streak, bestStreak, totalWords, newAchievements }: Props) {
+  const message = SUCCESS_MESSAGES[(totalWords + streak) % SUCCESS_MESSAGES.length];
 
   useEffect(() => {
     if (!success) return;
 
-    // Pick a random encouraging message
-    setMessage(
-      SUCCESS_MESSAGES[Math.floor(Math.random() * SUCCESS_MESSAGES.length)],
-    );
-
-    // Play the success fanfare (drum hit + ascending run + chord)
     playSuccessJingle();
 
-    // Spectacular confetti burst from multiple directions
     try {
-      // Main center burst — big and powerful
       confetti({
         particleCount: 200,
         spread: 180,
@@ -41,8 +47,6 @@ export default function Feedback({ success }: Props) {
         origin: { x: 0.5, y: 0.5 },
         colors: CONFETTI_COLORS,
       });
-
-      // Left side burst
       setTimeout(() => {
         confetti({
           particleCount: 120,
@@ -52,8 +56,6 @@ export default function Feedback({ success }: Props) {
           colors: CONFETTI_COLORS,
         });
       }, 100);
-
-      // Right side burst
       setTimeout(() => {
         confetti({
           particleCount: 120,
@@ -63,8 +65,6 @@ export default function Feedback({ success }: Props) {
           colors: CONFETTI_COLORS,
         });
       }, 150);
-
-      // Top burst
       setTimeout(() => {
         confetti({
           particleCount: 100,
@@ -74,8 +74,6 @@ export default function Feedback({ success }: Props) {
           colors: CONFETTI_COLORS,
         });
       }, 200);
-
-      // Bottom scattered burst
       setTimeout(() => {
         confetti({
           particleCount: 80,
@@ -86,7 +84,7 @@ export default function Feedback({ success }: Props) {
         });
       }, 350);
     } catch {
-      // ignore if confetti fails
+      // ignore
     }
   }, [success]);
 
@@ -95,7 +93,21 @@ export default function Feedback({ success }: Props) {
   return (
     <div className="feedback-overlay" aria-live="polite">
       <div className="celebrate-banner">
-        {message} <span className="toto-dance">🐻</span>
+        <div>{message} <span className="toto-dance">🐻</span></div>
+        <div className="stats-row">
+          <span className="stat">Racha: {streak}</span>
+          <span className="stat">Mejor: {bestStreak}</span>
+          <span className="stat">Hoy: {totalWords}</span>
+        </div>
+        {newAchievements.length > 0 && (
+          <div className="achievements-pop">
+            {newAchievements.map(id => (
+              <div key={id} className="achievement-badge">
+                ¡{ACHIEVEMENT_NAMES[id] || id}!
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

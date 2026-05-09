@@ -228,9 +228,13 @@ body::after {
   pointer-events: none;
 }
 .mascot {
-  font-size: 42px;
-  width: 820px;
-  height: 88px;
+  font-size: clamp(20px, 4vw, 42px);
+  width: auto;
+  max-width: 90%;
+  min-width: min(820px, 92%);
+  height: auto;
+  min-height: 64px;
+  padding: 10px 28px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -245,6 +249,8 @@ body::after {
   font-weight: 900;
   z-index: 6;
   letter-spacing: 0.5px;
+  text-align: center;
+  white-space: nowrap;
 }
 
 .mascot-top {
@@ -521,6 +527,237 @@ body::after {
   font-size: 14px;
 }
 
+/* ── Progress bar ──────────────────────────────────────────────────────── */
+.progress-bar-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  max-width: 420px;
+  margin-bottom: 4px;
+}
+.progress-track {
+  width: 100%;
+  height: 16px;
+  background: #e8e4f3;
+  border-radius: 999px;
+  border: 3px solid var(--border);
+  overflow: hidden;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.08);
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ffd166 0%, #06d6a0 100%);
+  border-radius: 999px;
+  transition: width 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.progress-text {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--border);
+}
+
+/* ── Menu / Start screen ───────────────────────────────────────────────── */
+.menu-card {
+  padding: 24px 36px 36px 36px;
+  max-width: 640px;
+}
+.menu-mascot-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.menu-mascot-bear {
+  font-size: clamp(64px, 12vw, 96px);
+  line-height: 1;
+  animation: bear-bounce 1.4s ease-in-out infinite;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.18));
+  user-select: none;
+}
+@keyframes bear-bounce {
+  0%, 100% { transform: translateY(0) scale(1) rotate(-4deg); }
+  40% { transform: translateY(-14px) scale(1.08) rotate(4deg); }
+  60% { transform: translateY(-6px) scale(1.04) rotate(0deg); }
+}
+.menu-mascot-pill {
+  width: auto;
+  min-width: unset;
+  max-width: 100%;
+  white-space: nowrap;
+  font-size: clamp(22px, 5vw, 36px);
+  padding: 12px 32px;
+  min-height: 56px;
+}
+.menu-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  margin-top: 18px;
+}
+.menu-intro {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--border);
+  text-align: center;
+  margin: 0;
+}
+.level-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 400px;
+}
+.level-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 22px 28px;
+  border-radius: 22px;
+  border: 5px solid var(--border);
+  font-family: inherit;
+  font-weight: 900;
+  cursor: pointer;
+  transition:
+    transform 140ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 140ms ease;
+  box-shadow:
+    0 6px 0 var(--border),
+    0 12px 24px rgba(0,0,0,0.15);
+}
+.level-btn:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow:
+    0 9px 0 var(--border),
+    0 16px 32px rgba(0,0,0,0.2);
+}
+.level-btn:active {
+  transform: translateY(4px) scale(0.98);
+  box-shadow:
+    0 1px 0 var(--border),
+    0 4px 8px rgba(0,0,0,0.1);
+}
+.level-1 {
+  background: linear-gradient(135deg, #ffd166 0%, #ff9a3c 100%);
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+.level-2 {
+  background: linear-gradient(135deg, #4cc9f0 0%, #3a86ff 100%);
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+.level-title {
+  font-size: 28px;
+}
+.level-desc {
+  font-size: 16px;
+  font-weight: 400;
+  opacity: 0.95;
+}
+.menu-stats {
+  display: flex;
+  gap: 28px;
+  margin-top: 8px;
+}
+.menu-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.menu-stat-value {
+  font-size: 32px;
+  font-weight: 900;
+  color: var(--accent);
+  line-height: 1;
+}
+.menu-stat-label {
+  font-size: 14px;
+  color: #666;
+  font-weight: 700;
+}
+
+/* ── Victory screen ────────────────────────────────────────────────────── */
+.victory-card {
+  padding: 60px 36px 40px 36px;
+  max-width: 560px;
+  text-align: center;
+}
+.victory-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  margin-top: 12px;
+}
+.victory-trophy {
+  font-size: 96px;
+  line-height: 1;
+  animation: trophy-bounce 900ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+@keyframes trophy-bounce {
+  0%   { transform: scale(0) rotate(-20deg); opacity: 0; }
+  55%  { transform: scale(1.2) rotate(6deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+.victory-text {
+  font-size: 32px;
+  font-weight: 900;
+  color: var(--border);
+  margin: 0;
+}
+.victory-stats {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 700;
+  color: #555;
+}
+
+/* ── Feedback stats & achievements ─────────────────────────────────────── */
+.stats-row {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin-top: 12px;
+  font-size: clamp(16px, 2.5vw, 22px);
+  font-weight: 700;
+}
+.stat {
+  background: rgba(0,0,0,0.15);
+  padding: 6px 14px;
+  border-radius: 12px;
+}
+.achievements-pop {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 14px;
+}
+.achievement-badge {
+  background: #fff;
+  color: var(--accent);
+  padding: 8px 16px;
+  border-radius: 14px;
+  font-size: clamp(16px, 2.5vw, 22px);
+  font-weight: 900;
+  border: 4px solid var(--border);
+  animation: badge-pop 500ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+@keyframes badge-pop {
+  0%   { transform: scale(0); opacity: 0; }
+  60%  { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
 @media (max-width: 640px) {
   .card {
     padding: 28px 16px 20px 16px;
@@ -545,9 +782,22 @@ body::after {
       0 6px 12px rgba(0, 0, 0, 0.14);
   }
   .mascot {
-    font-size: 28px;
+    font-size: clamp(18px, 5vw, 28px);
+    min-width: unset;
     width: 96%;
-    height: 72px;
+    min-height: 56px;
+    padding: 8px 16px;
+    white-space: nowrap;
+  }
+  .menu-card {
+    padding: 16px 20px 24px 20px;
+  }
+  .menu-mascot-bear {
+    font-size: 56px;
+  }
+  .menu-mascot-pill {
+    font-size: clamp(18px, 5.5vw, 24px);
+    padding: 10px 20px;
   }
   .prompt {
     font-size: 28px;
