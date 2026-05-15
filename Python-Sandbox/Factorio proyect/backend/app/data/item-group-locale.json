@@ -1,0 +1,19 @@
+
+
+{
+  "names": 
+  {
+    "logistics": "Logística",
+    "production": "Producción",
+    "intermediate-products": "Productos intermedios",
+    "space": "Espacio",
+    "combat": "Combate",
+    "fluids": "Fluidos",
+    "signals": "Señales",
+    "enemies": "Enemigos",
+    "tiles": "Baldosas",
+    "environment": "Entorno",
+    "effects": "Efectos",
+    "other": "Otros"
+  }
+}

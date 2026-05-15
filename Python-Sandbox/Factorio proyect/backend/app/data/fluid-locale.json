@@ -1,0 +1,46 @@
+
+
+{
+  "names": 
+  {
+    "water": "Agua",
+    "steam": "Vapor",
+    "crude-oil": "Petróleo crudo",
+    "petroleum-gas": "Gas de petróleo",
+    "light-oil": "Petróleo ligero",
+    "heavy-oil": "Petróleo pesado",
+    "lubricant": "Lubricante",
+    "sulfuric-acid": "Ácido sulfúrico",
+    "thruster-fuel": "Combustible de propulsor",
+    "thruster-oxidizer": "Oxidante de propulsor",
+    "lava": "Lava",
+    "molten-iron": "Hierro fundido",
+    "molten-copper": "Cobre fundido",
+    "holmium-solution": "Solución de holmio",
+    "electrolyte": "Electrolito",
+    "ammoniacal-solution": "Solución amoníaca",
+    "ammonia": "Amoníaco",
+    "fluorine": "Flúor",
+    "fluoroketone-hot": "Fluorocetona (caliente)",
+    "fluoroketone-cold": "Fluorocetona (fría)",
+    "lithium-brine": "Solución de litio",
+    "fusion-plasma": "Plasma",
+    "parameter-0": "Parámetro 0",
+    "parameter-1": "Parámetro 1",
+    "parameter-2": "Parámetro 2",
+    "parameter-3": "Parámetro 3",
+    "parameter-4": "Parámetro 4",
+    "parameter-5": "Parámetro 5",
+    "parameter-6": "Parámetro 6",
+    "parameter-7": "Parámetro 7",
+    "parameter-8": "Parámetro 8",
+    "parameter-9": "Parámetro 9",
+    "fluid-unknown": "Fluido desconocido"
+  },
+  "descriptions": 
+  {
+    "thruster-fuel": "Combustible de propulsor líquido",
+    "fusion-plasma": "Los iones de ultra-alta temperatura se generan en un [entity=fusion-reactor] y son consumidos por un [entity=fusion-generator]. No es un fluido normal y no puede moverse a través de un [entity=pipe], solo puede transferirse entre el Reactor de Fusión y el Generador de Fusión.\nLa temperatura del plasma determina su valor energético.\nAdemás, la cantidad de plasma también representa la cantidad de refrigerante necesario, y el refrigerante calentado es expulsado por el Generador de Fusión a medida que el plasma se usa para generar energía.",
+    "fluid-unknown": "Este fluido no está disponible al haberse eliminado el mod. Podrá volver a usarse al reactivarlo."
+  }
+}
