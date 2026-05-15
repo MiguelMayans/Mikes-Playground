@@ -1,1 +1,230 @@
+# ================================================
+# Global .gitignore for Mikes-Playground
+# ================================================
+
+# ------------------------------------------------
+# Operating System Files
+# ------------------------------------------------
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# ------------------------------------------------
+# IDE / Editor Files
+# ------------------------------------------------
+# Nota: .vscode/ e .idea/ se gestionan mejor por proyecto.
+# Si quieres ignorarlos globalmente, descomenta las siguientes líneas,
+# pero ten en cuenta que no podrás re-incluir archivos desde .gitignore locales.
+# .vscode/
+# .idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.ntvs*
+*.njsproj
+# *.sln  <-- descomentar solo si todos los .sln son autogenerados y no quieres versionarlos
+*.sw?
+*.swo
+*.swp
+*~
+*.sublime-workspace
+*.sublime-project
+.project
+.classpath
+.settings/
+.c9/
+*.launch
+.history/
+
+# ------------------------------------------------
+# Logs and Temporary Files
+# ------------------------------------------------
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+*.tmp
+*.temp
+*.cache
+cache/
+
+# ------------------------------------------------
+# Secrets and Environment Variables
+# ------------------------------------------------
+.env
+.env.local
+.env.*.local
+!.env.example
+*.pem
+*.key
+*.crt
+credentials.json
+serviceAccountKey.json
+secrets/
+
+# ------------------------------------------------
+# Node.js / JavaScript / TypeScript
+# ------------------------------------------------
+node_modules/
+dist/
+dist-ssr/
+build/
+.out/
+.next/
+.nuxt/
+.svelte-kit/
+.angular/
+.parcel-cache/
+.vite/
+vite.config.ts.timestamp-*
+vite.config.js.timestamp-*
+coverage/
+*.local
+
+# ------------------------------------------------
+# Python
+# ------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+# lib/ y lib64/ suelen ser carpetas dentro de venvs (ya cubiertos arriba).
+# Si algún proyecto propio usa lib/ como código fuente, no las ignores globalmente.
+# lib/
+# lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+venv/
+ENV/
+env/
+.venv
+.env
+.pytest_cache/
+.mypy_cache/
+.dmypy.json
+*.manifest
+*.spec
+pip-log.txt
+pip-delete-this-directory.txt
+htmlcov/
+.tox/
+
+# ------------------------------------------------
+# Java
+# ------------------------------------------------
+*.class
+*.jar
+*.war
+*.ear
+target/
+build/
+.gradle/
+gradle-app.setting
+!gradle-wrapper.jar
+!gradle-wrapper.properties
+.settings/
+.project
+.classpath
+*.iml
+*.ipr
+*.iws
+
+# ------------------------------------------------
+# C / C++
+# ------------------------------------------------
+*.o
+*.obj
+*.exe
+*.out
+*.app
+a.out
+*.ilk
+*.pdb
+*.lib
+*.a
+*.so
+*.dll
+*.dylib
+build/
+cmake-build-*/
+CMakeCache.txt
+CMakeFiles/
+Makefile.in
+configure
+compile
+install-sh
+missing
+deps/
+
+# ------------------------------------------------
+# C# / .NET
+# ------------------------------------------------
+bin/
+obj/
+.vs/
+*.user
+*.suo
+*.cache
+*.csproj.user
+*.pubxml
+*.publishsettings
+
+# ------------------------------------------------
+# Rust
+# ------------------------------------------------
+target/
+**/*.rs.bk
+*.pdb
+
+# ------------------------------------------------
+# Go
+# ------------------------------------------------
+bin/
+*.test
+*.out
+vendor/
+
+# ------------------------------------------------
+# Docker
+# ------------------------------------------------
+*.env.docker
+.dockerignore.local
+
+# ------------------------------------------------
+# Factorio Calculator - Game Icons (~1180 PNGs)
+# ------------------------------------------------
+Python-Sandbox/Factorio\ proyect/backend/app/static/icons/
+Python-Sandbox/Factorio\ proyect/backend/app/static/icons_original/
+
+# ------------------------------------------------
+# Misc
+# ------------------------------------------------
+*.bak
+*.orig
+*.rej
+*.patch
+*.diff
