@@ -4,6 +4,20 @@ import os
 DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
 ICONS_DIR = os.path.join(os.path.dirname(__file__), "..", "static", "icons")
 
+# Items whose icon filename doesn't match their ID
+ICON_ALIASES = {
+    "barrel": "empty-barrel",
+    "water-barrel": "empty-barrel",
+    "fluoroketone-hot-barrel": "empty-barrel",
+    "fluoroketone-cold-barrel": "empty-barrel",
+    "petroleum-gas-barrel": "empty-barrel",
+    "lubricant-barrel": "empty-barrel",
+    "crude-oil-barrel": "empty-barrel",
+    "light-oil-barrel": "empty-barrel",
+    "heavy-oil-barrel": "empty-barrel",
+    "sulfuric-acid-barrel": "empty-barrel",
+}
+
 
 class FactorioData:
     def __init__(self):
@@ -16,10 +30,12 @@ class FactorioData:
         self.recipes = {}
         self.items = {}
         self.machines = {}
+        self.technologies = {}
 
         self._parse_items()
         self._parse_recipes()
         self._parse_machines()
+        self._parse_technologies()
 
     def _load_json(self, filename):
         path = os.path.join(DATA_DIR, filename)
@@ -30,16 +46,23 @@ class FactorioData:
         names = locale.get("names", {})
         return names.get(key, key)
 
+    def _get_icon(self, item_id):
+        icon_name = ICON_ALIASES.get(item_id, item_id)
+        path = os.path.join(ICONS_DIR, f"{icon_name}.png")
+        return f"/icons/{icon_name}.png" if os.path.exists(path) else None
+
     def _parse_items(self):
         for item_id, item_data in self.raw.get("item", {}).items():
+            flags = item_data.get("flags", [])
+            # Skip cursor-only and hidden items (not producible)
+            if "only-in-cursor" in flags or "hidden" in flags:
+                continue
             name = self._get_name(self.item_locale, item_id)
-            icon = f"/icons/{item_id}.png" if os.path.exists(os.path.join(ICONS_DIR, f"{item_id}.png")) else None
-            self.items[item_id] = {"id": item_id, "name": name, "type": "item", "icon": icon}
+            self.items[item_id] = {"id": item_id, "name": name, "type": "item", "icon": self._get_icon(item_id)}
 
         for fluid_id, fluid_data in self.raw.get("fluid", {}).items():
             name = self._get_name(self.fluid_locale, fluid_id)
-            icon = f"/icons/{fluid_id}.png" if os.path.exists(os.path.join(ICONS_DIR, f"{fluid_id}.png")) else None
-            self.items[fluid_id] = {"id": fluid_id, "name": name, "type": "fluid", "icon": icon}
+            self.items[fluid_id] = {"id": fluid_id, "name": name, "type": "fluid", "icon": self._get_icon(fluid_id)}
 
     def _parse_ingredients(self, ingredients_raw):
         result = []
@@ -182,12 +205,12 @@ class FactorioData:
         return candidates[0]
 
     def get_machines_for_category(self, category):
-        """Return all machines that can handle this category, sorted by speed desc."""
+        """Return all machines that can handle this category, sorted by speed asc (lowest tier first)."""
         candidates = []
         for machine in self.machines.values():
             if category in machine["crafting_categories"]:
                 candidates.append(machine)
-        candidates.sort(key=lambda m: m["crafting_speed"], reverse=True)
+        candidates.sort(key=lambda m: m["crafting_speed"])
         return candidates
 
     def get_default_machine(self, recipe):
@@ -197,16 +220,16 @@ class FactorioData:
         if not candidates:
             return None
 
-        # Prefer a standard machine for the category, fallback to fastest
+        # Prefer lowest-tier machine for the category, fallback to slowest
         CATEGORY_DEFAULTS = {
             "chemistry": "chemical-plant",
             "chemistry-or-cryogenics": "chemical-plant",
             "cryogenics": "cryogenic-plant",
             "oil-processing": "oil-refinery",
-            "crafting": "assembling-machine-2",
+            "crafting": "assembling-machine-1",
             "crafting-with-fluid": "assembling-machine-2",
-            "advanced-crafting": "assembling-machine-3",
-            "smelting": "electric-furnace",
+            "advanced-crafting": "assembling-machine-1",
+            "smelting": "stone-furnace",
             "rocket-building": "rocket-silo",
             "centrifuging": "centrifuge",
             "crushing": "crusher",
@@ -215,10 +238,10 @@ class FactorioData:
             "organic": "biochamber",
             "organic-or-chemistry": "chemical-plant",
             "organic-or-assembling": "assembling-machine-2",
-            "electronics": "assembling-machine-3",
-            "electronics-or-assembling": "assembling-machine-3",
-            "electronics-with-fluid": "assembling-machine-3",
-            "pressing": "foundry",
+            "electronics": "assembling-machine-1",
+            "electronics-or-assembling": "assembling-machine-2",
+            "electronics-with-fluid": "assembling-machine-2",
+            "pressing": "assembling-machine-1",
             "captive-spawner-process": "captive-biter-spawner",
             "recycling": "recycler",
             "recycling-or-hand-crafting": "recycler",
@@ -230,6 +253,75 @@ class FactorioData:
                     return c
 
         return candidates[0]
+
+    def _parse_technologies(self):
+        # Fallback to recipe locale for tech names, or use ID
+        tech_locale = self.recipe_locale
+        for tech_id, tech_data in self.raw.get("technology", {}).items():
+            name = self._get_name(tech_locale, tech_id)
+            if name == tech_id:
+                # Try to get from entity locale
+                name = self._get_name(self.entity_locale, tech_id)
+            prerequisites = tech_data.get("prerequisites", [])
+            if isinstance(prerequisites, dict):
+                prerequisites = list(prerequisites.keys())
+            effects = []
+            for eff in tech_data.get("effects", []):
+                if eff.get("type") == "unlock-recipe":
+                    effects.append({"type": "recipe", "recipe": eff.get("recipe", "")})
+
+            # Research cost
+            cost = None
+            unit = tech_data.get("unit")
+            if unit:
+                ingredients = []
+                for ing in unit.get("ingredients", []):
+                    if isinstance(ing, list):
+                        ingredients.append({"name": ing[0], "amount": ing[1]})
+                    elif isinstance(ing, dict):
+                        ingredients.append({"name": ing.get("name", ""), "amount": ing.get("amount", 0)})
+                cost = {
+                    "time": unit.get("time", 0),
+                    "count": unit.get("count", 0),
+                    "ingredients": ingredients,
+                }
+            trigger = tech_data.get("research_trigger")
+            if trigger:
+                cost = {
+                    "trigger_type": trigger.get("type", ""),
+                    "item": trigger.get("item", ""),
+                    "count": trigger.get("count", 1),
+                }
+
+            self.technologies[tech_id] = {
+                "id": tech_id,
+                "name": name,
+                "prerequisites": prerequisites,
+                "effects": effects,
+                "cost": cost,
+            }
+
+    def get_tech_tree(self, tech_id, visited=None):
+        if visited is None:
+            visited = set()
+        if tech_id in visited:
+            return None
+        visited.add(tech_id)
+        tech = self.technologies.get(tech_id)
+        if not tech:
+            return None
+        children = []
+        for prereq_id in tech["prerequisites"]:
+            child = self.get_tech_tree(prereq_id, visited)
+            if child:
+                children.append(child)
+        return {
+            "id": tech_id,
+            "name": tech["name"],
+            "cost": tech["cost"],
+            "effects": tech["effects"],
+            "children": children,
+        }
 
 
 factorio_data = FactorioData()

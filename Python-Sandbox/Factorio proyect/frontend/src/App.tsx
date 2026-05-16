@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from "react";
-import { calculate, getItems, getItemRecipes } from "./api";
+import { calculate, getItems, getItemRecipes, getTechnologies, getTechnologyTree } from "./api";
 import type { CalculationResult, Item, TreeNode } from "./types";
 import {
   Plus,
@@ -23,6 +23,29 @@ const API_BASE = "http://localhost:8000";
 
 function cn(...classes: (string | false | null | undefined)[]) {
   return classes.filter(Boolean).join(" ");
+}
+
+// Hook to close dropdown when clicking outside
+function useClickOutside(refs: React.RefObject<HTMLElement | null>[], onOutside: () => void, active: boolean) {
+  useEffect(() => {
+    if (!active) return;
+    function handle(e: MouseEvent) {
+      const target = e.target as Node;
+      const inside = refs.some((ref) => ref.current && ref.current.contains(target));
+      if (!inside) onOutside();
+    }
+    document.addEventListener("mousedown", handle);
+    return () => document.removeEventListener("mousedown", handle);
+  }, [active, onOutside, ...refs]);
+}
+
+// Collect all raw resource rates from a tree
+function collectRawResources(node: TreeNode, map: Map<string, number> = new Map()) {
+  if (!node.recipe_id && node.recipe_name === "Recurso bruto") {
+    map.set(node.item_id, (map.get(node.item_id) || 0) + node.rate_per_minute);
+  }
+  node.children.forEach((child) => collectRawResources(child, map));
+  return map;
 }
 
 function getItemCategoryClass(itemId: string): string {
@@ -217,6 +240,8 @@ function TreeNodeRow({
   node,
   items,
   depth = 0,
+  parentRate = 0,
+  expandAll,
   recipeOverrides,
   machineOverrides,
   onRecipeChange,
@@ -225,6 +250,8 @@ function TreeNodeRow({
   node: TreeNode;
   items: Item[];
   depth?: number;
+  parentRate?: number;
+  expandAll?: boolean;
   recipeOverrides: Record<string, string>;
   machineOverrides: Record<string, string>;
   onRecipeChange: (itemId: string, recipeId: string) => void;
@@ -233,11 +260,36 @@ function TreeNodeRow({
   const [expanded, setExpanded] = useState(depth < 2);
   const [showRecipeSelector, setShowRecipeSelector] = useState(false);
   const [showMachineSelector, setShowMachineSelector] = useState(false);
+  const recipeRef = useRef<HTMLDivElement>(null);
+  const machineRef = useRef<HTMLDivElement>(null);
+  const recipeBtnRef = useRef<HTMLButtonElement>(null);
+  const machineBtnRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (expandAll !== undefined) {
+      setExpanded(expandAll);
+    }
+  }, [expandAll]);
+
+  useClickOutside(
+    [recipeRef, recipeBtnRef],
+    () => setShowRecipeSelector(false),
+    showRecipeSelector,
+  );
+  useClickOutside(
+    [machineRef, machineBtnRef],
+    () => setShowMachineSelector(false),
+    showMachineSelector,
+  );
+
   const hasChildren = node.children && node.children.length > 0;
   const itemData = items.find((i) => i.id === node.item_id);
   const hasAlternatives = !!node.recipe_id;
   const isRaw = !node.recipe_id;
   const availableMachines = node.available_machines || [];
+
+  // Calculate ratio: how many of this item per 1 parent item
+  const ratio = parentRate > 0 ? node.rate_per_minute / parentRate : 0;
 
   return (
     <div>
@@ -286,14 +338,20 @@ function TreeNodeRow({
             <span className="text-[11px] text-[var(--color-text-dim)] font-mono tabular-nums">
               {node.rate_per_minute.toFixed(1)}{" "}
               <span className="text-[var(--color-text-dim)]">/min</span>
+              {ratio > 0 && depth > 0 && (
+                <span className="ml-2 text-[var(--color-text-tertiary)]">
+                  ({ratio.toFixed(2)}×)
+                </span>
+              )}
             </span>
           </div>
         </div>
 
         {/* Recipe */}
-        <div className="relative min-w-[140px] max-w-[180px]">
+        <div className="relative min-w-[140px] max-w-[180px]" ref={recipeRef}>
           {hasAlternatives ? (
             <button
+              ref={recipeBtnRef}
               onClick={() => setShowRecipeSelector(!showRecipeSelector)}
               className="text-[11px] text-[var(--color-orange-400)] hover:text-[var(--color-orange-300)] transition-colors border-b border-dashed border-[var(--color-orange-700)] hover:border-[var(--color-orange-400)] pb-0.5"
             >
@@ -308,20 +366,21 @@ function TreeNodeRow({
             <RecipeSelectorPopup
               itemId={node.item_id}
               currentRecipeId={node.recipe_id}
-              onSelect={(rid) => onRecipeChange(node.item_id, rid)}
+              onSelect={(rid) => { setShowRecipeSelector(false); onRecipeChange(node.item_id, rid); }}
               onClose={() => setShowRecipeSelector(false)}
             />
           )}
         </div>
 
         {/* Machines */}
-        <div className="flex items-center gap-3 min-w-[130px] justify-end relative">
+        <div className="flex items-center gap-3 min-w-[130px] justify-end relative" ref={machineRef}>
           {!isRaw && (
             <>
               <span className="font-mono font-bold text-[13px] text-[var(--color-green)] tabular-nums">
                 {node.machines_needed.toFixed(2)}
               </span>
               <button
+                ref={machineBtnRef}
                 onClick={() => availableMachines.length > 1 && setShowMachineSelector(!showMachineSelector)}
                 className={cn(
                   "flex items-center gap-1.5 min-w-0",
@@ -341,7 +400,7 @@ function TreeNodeRow({
                 <MachineSelectorPopup
                   machines={availableMachines}
                   currentMachineId={node.machine_id}
-                  onSelect={(mid) => onMachineChange(node.item_id, mid)}
+                  onSelect={(mid) => { setShowMachineSelector(false); onMachineChange(node.item_id, mid); }}
                   onClose={() => setShowMachineSelector(false)}
                 />
               )}
@@ -368,6 +427,8 @@ function TreeNodeRow({
               node={child}
               items={items}
               depth={depth + 1}
+              parentRate={node.rate_per_minute}
+              expandAll={expandAll}
               recipeOverrides={recipeOverrides}
               machineOverrides={machineOverrides}
               onRecipeChange={onRecipeChange}
@@ -398,7 +459,11 @@ export default function App() {
   const [recipeOverrides, setRecipeOverrides] = useState<Record<string, string>>({});
   const [machineOverrides, setMachineOverrides] = useState<Record<string, string>>({});
   const [timeUnit, setTimeUnit] = useState<"sec" | "min" | "hr">("min");
+  const [highlightedIndex, setHighlightedIndex] = useState(-1);
+  const [allExpanded, setAllExpanded] = useState(true);
+  const [activeTab, setActiveTab] = useState<"ratios" | "technologies">("ratios");
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const itemsListRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     getItems()
@@ -419,9 +484,24 @@ export default function App() {
     return () => clearTimeout(timer);
   }, []);
 
+  // Scroll highlighted item into view
+  useEffect(() => {
+    if (highlightedIndex >= 0 && itemsListRef.current) {
+      const buttons = itemsListRef.current.querySelectorAll("button");
+      if (buttons[highlightedIndex]) {
+        buttons[highlightedIndex].scrollIntoView({ block: "nearest", behavior: "smooth" });
+      }
+    }
+  }, [highlightedIndex]);
+
   const filteredItems = items.filter((i) =>
     i.name.toLowerCase().includes(search.toLowerCase()),
   );
+
+  // Reset highlight when search changes
+  useEffect(() => {
+    setHighlightedIndex(search.trim() === "" ? -1 : 0);
+  }, [search]);
 
   const handleCalculate = useCallback(async () => {
     const valid = targets.filter((t) => t.item_id && t.rate_per_minute > 0);
@@ -499,7 +579,7 @@ export default function App() {
         {/* Hero Header */}
         <header className="border-b border-[var(--color-border-1)] relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-r from-[var(--color-orange-700)]/5 via-transparent to-[var(--color-orange-500)]/5 animate-pulse-glow" />
-          <div className="max-w-[1600px] mx-auto px-8 py-10 relative">
+          <div className="max-w-[1600px] mx-auto px-8 pt-10 pb-0 relative">
             <div className="flex items-end justify-between gap-6">
               <div className="flex items-center gap-5">
                 <div className="relative">
@@ -510,10 +590,19 @@ export default function App() {
                       strokeWidth={2.5}
                     />
                   </div>
+                  {/* Engineer character */}
+                  <div className="absolute -bottom-2 -right-3 w-10 h-10">
+                    <img
+                      src={`${API_BASE}/icons/character.png`}
+                      alt="Engineer"
+                      className="pixelated w-full h-full object-contain drop-shadow-lg"
+                      style={{ imageRendering: "pixelated" }}
+                    />
+                  </div>
                 </div>
                 <div>
                   <h1 className="text-3xl font-extrabold tracking-tight text-[var(--color-text-primary)]">
-                    Ratio<span className="text-[var(--color-orange-500)]">Lab</span>
+                    Factorio Ratio<span className="text-[var(--color-orange-500)]">Lab</span>
                   </h1>
                   <p className="text-sm text-[var(--color-text-tertiary)] mt-1 font-medium tracking-wide">
                     Calculadora de ratios para Factorio 2.0
@@ -530,14 +619,43 @@ export default function App() {
                 </div>
               </div>
             </div>
+
+            {/* Tabs */}
+            <div className="flex items-center gap-1 mt-8">
+              <button
+                onClick={() => setActiveTab("ratios")}
+                className={cn(
+                  "px-5 py-2.5 rounded-t-xl text-sm font-semibold transition-all border-t border-x",
+                  activeTab === "ratios"
+                    ? "bg-[var(--color-surface-0)] border-[var(--color-border-1)] text-[var(--color-orange-400)]"
+                    : "bg-transparent border-transparent text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)]"
+                )}
+              >
+                <Factory size={14} className="inline mr-2 -mt-0.5" />
+                Ratios
+              </button>
+              <button
+                onClick={() => setActiveTab("technologies")}
+                className={cn(
+                  "px-5 py-2.5 rounded-t-xl text-sm font-semibold transition-all border-t border-x",
+                  activeTab === "technologies"
+                    ? "bg-[var(--color-surface-0)] border-[var(--color-border-1)] text-[var(--color-orange-400)]"
+                    : "bg-transparent border-transparent text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)]"
+                )}
+              >
+                <Beaker size={14} className="inline mr-2 -mt-0.5" />
+                Tecnologías
+              </button>
+            </div>
           </div>
         </header>
 
+        {activeTab === "ratios" && (
         <div className="max-w-[1600px] mx-auto p-8 grid grid-cols-[420px_1fr] gap-8">
           {/* Sidebar */}
           <aside className="space-y-5">
             {/* Big prominent search */}
-            <div className="rounded-2xl border border-[var(--color-border-1)] bg-[var(--color-surface-0)]/80 backdrop-blur-sm shadow-xl shadow-black/20 overflow-hidden">
+            <div className="rounded-2xl border border-[var(--color-border-1)] bg-[var(--color-surface-0)]/80 backdrop-blur-sm shadow-xl shadow-black/20">
               <div className="p-5 space-y-4">
                 <div className="relative">
                   <Search
@@ -549,39 +667,68 @@ export default function App() {
                     type="text"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (filteredItems.length === 0) return;
+                      if (e.key === "ArrowDown") {
+                        e.preventDefault();
+                        setHighlightedIndex((prev) =>
+                          prev < filteredItems.length - 1 ? prev + 1 : prev
+                        );
+                      } else if (e.key === "ArrowUp") {
+                        e.preventDefault();
+                        setHighlightedIndex((prev) => (prev > 0 ? prev - 1 : 0));
+                      } else if (e.key === "Enter") {
+                        e.preventDefault();
+                        if (highlightedIndex >= 0 && highlightedIndex < filteredItems.length) {
+                          addTarget(filteredItems[highlightedIndex].id);
+                          setSearch("");
+                          setHighlightedIndex(-1);
+                        }
+                      } else if (e.key === "Escape") {
+                        setSearch("");
+                        setHighlightedIndex(-1);
+                        searchInputRef.current?.focus();
+                      }
+                    }}
                     placeholder="Buscar item..."
                     className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-[var(--color-surface-2)] border border-[var(--color-border-2)] text-base text-[var(--color-text-primary)] placeholder:text-[var(--color-text-dim)] outline-none focus:border-[var(--color-orange-500)]/50 focus:ring-2 focus:ring-[var(--color-orange-500)]/10 transition-all"
                   />
                 </div>
 
                 {/* Items list */}
-                <div className="max-h-[300px] overflow-y-auto space-y-1 pr-1">
-                  {search.trim() === "" ? (
-                    <div className="text-center py-8 text-[var(--color-text-dim)]">
-                      <Search size={24} className="mx-auto mb-2 opacity-50" />
-                      <p className="text-xs">Escribe para buscar items</p>
-                      <p className="text-[10px] mt-1 opacity-60">
-                        {items.length.toLocaleString()} items disponibles
-                      </p>
-                    </div>
-                  ) : filteredItems.length === 0 ? (
+                <div className="max-h-[400px] overflow-y-auto space-y-1 pr-1" ref={itemsListRef}>
+                  {filteredItems.length === 0 ? (
                     <div className="text-center py-8 text-xs text-[var(--color-text-dim)]">
                       No se encontraron items
                     </div>
                   ) : (
-                    filteredItems.slice(0, 30).map((item) => (
+                    filteredItems.map((item, index) => (
                       <button
                         key={item.id}
-                        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left hover:bg-[var(--color-surface-2)] transition-colors group"
-                        onClick={() => addTarget(item.id)}
+                        className={cn(
+                          "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-colors group",
+                          "hover:bg-[var(--color-surface-2)]",
+                          highlightedIndex === index && "bg-[var(--color-orange-500)]/10 border border-[var(--color-orange-500)]/30"
+                        )}
+                        onClick={() => {
+                          addTarget(item.id);
+                          setSearch("");
+                          setHighlightedIndex(-1);
+                        }}
                       >
                         <ItemIcon icon={item.icon} name={item.name} size={26} />
-                        <span className="text-sm text-[var(--color-text-primary)] group-hover:text-[var(--color-orange-400)] transition-colors">
+                        <span className={cn(
+                          "text-sm transition-colors text-[var(--color-text-primary)] group-hover:text-[var(--color-orange-400)]",
+                          highlightedIndex === index && "text-[var(--color-orange-400)]"
+                        )}>
                           {item.name}
                         </span>
                         <Plus
                           size={14}
-                          className="ml-auto text-[var(--color-text-dim)] opacity-0 group-hover:opacity-100 transition-opacity"
+                          className={cn(
+                            "ml-auto transition-opacity text-[var(--color-text-dim)] opacity-0 group-hover:opacity-100",
+                            highlightedIndex === index && "text-[var(--color-orange-400)] opacity-100"
+                          )}
                         />
                       </button>
                     ))
@@ -753,10 +900,11 @@ export default function App() {
                 {/* Target trees */}
                 {result.targets.map((tr, idx) => {
                   const item = items.find((i) => i.id === tr.target_item);
+                  const rawResources = tr.tree ? Array.from(collectRawResources(tr.tree).entries()) : [];
                   return (
                     <div
                       key={idx}
-                      className="rounded-2xl border border-[var(--color-border-1)] bg-[var(--color-surface-0)]/80 backdrop-blur-sm shadow-xl shadow-black/20 overflow-hidden"
+                      className="rounded-2xl border border-[var(--color-border-1)] bg-[var(--color-surface-0)]/80 backdrop-blur-sm shadow-xl shadow-black/20 relative z-10"
                     >
                       <div className="px-6 py-4 border-b border-[var(--color-border-1)] flex items-center justify-between">
                         <div className="flex items-center gap-3">
@@ -774,19 +922,29 @@ export default function App() {
                             </span>
                           </div>
                         </div>
-                        <button
-                          onClick={exportResults}
-                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-surface-2)] transition-colors"
-                        >
-                          <Copy size={12} />
-                          Copiar
-                        </button>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => setAllExpanded(!allExpanded)}
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-surface-2)] transition-colors"
+                          >
+                            {allExpanded ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
+                            {allExpanded ? "Colapsar" : "Expandir"}
+                          </button>
+                          <button
+                            onClick={exportResults}
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-surface-2)] transition-colors"
+                          >
+                            <Copy size={12} />
+                            Copiar
+                          </button>
+                        </div>
                       </div>
                       <div className="p-3">
                         {tr.tree && (
                           <TreeNodeRow
                             node={tr.tree}
                             items={items}
+                            expandAll={allExpanded}
                             recipeOverrides={recipeOverrides}
                             machineOverrides={machineOverrides}
                             onRecipeChange={(id, rid) =>
@@ -798,13 +956,41 @@ export default function App() {
                           />
                         )}
                       </div>
+                      {/* Raw resources summary */}
+                      {rawResources.length > 0 && (
+                        <div className="px-6 py-3 border-t border-[var(--color-border-1)] bg-[var(--color-surface-1)]/50">
+                          <div className="flex items-center gap-2 mb-2">
+                            <Pickaxe size={12} className="text-[var(--color-cat-raw)]" />
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-text-tertiary)]">
+                              Recursos raw necesarios
+                            </span>
+                          </div>
+                          <div className="flex flex-wrap gap-2">
+                            {rawResources.map(([itemId, rate]) => {
+                              const rawItem = items.find((i) => i.id === itemId);
+                              return (
+                                <div
+                                  key={itemId}
+                                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[var(--color-surface-2)] border border-[var(--color-border-1)]"
+                                >
+                                  <ItemIcon icon={rawItem?.icon} name={rawItem?.name || itemId} size={18} />
+                                  <span className="text-xs text-[var(--color-text-secondary)]">{rawItem?.name || itemId}</span>
+                                  <span className="text-xs font-mono font-bold text-[var(--color-cat-raw)] tabular-nums">
+                                    {rate.toFixed(1)}/min
+                                  </span>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   );
                 })}
 
                 {/* Totals */}
                 {Object.entries(result.total_machines).length > 0 && (
-                  <div className="rounded-2xl border border-[var(--color-border-1)] bg-[var(--color-surface-0)]/80 backdrop-blur-sm shadow-xl shadow-black/20 overflow-hidden">
+                  <div className="rounded-2xl border border-[var(--color-border-1)] bg-[var(--color-surface-0)]/80 backdrop-blur-sm shadow-xl shadow-black/20">
                     <div className="px-6 py-4 border-b border-[var(--color-border-1)] flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <Factory
@@ -839,7 +1025,183 @@ export default function App() {
             )}
           </main>
         </div>
+        )}
+
+        {activeTab === "technologies" && (
+          <TechnologyTab />
+        )}
       </div>
+    </div>
+  );
+}
+
+function TechnologyTab() {
+  const [techSearch, setTechSearch] = useState("");
+  const [technologies, setTechnologies] = useState<any[]>([]);
+  const [selectedTech, setSelectedTech] = useState<string | null>(null);
+  const [techTree, setTechTree] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
+  const techSearchRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    getTechnologies().then(setTechnologies).catch(() => {});
+    setTimeout(() => techSearchRef.current?.focus(), 300);
+  }, []);
+
+  useEffect(() => {
+    if (selectedTech) {
+      setLoading(true);
+      getTechnologyTree(selectedTech)
+        .then((tree) => { setTechTree(tree); setLoading(false); })
+        .catch(() => setLoading(false));
+    }
+  }, [selectedTech]);
+
+  const filteredTechs = technologies.filter((t) =>
+    t.name.toLowerCase().includes(techSearch.toLowerCase())
+  );
+
+  return (
+    <div className="max-w-[1600px] mx-auto p-8 grid grid-cols-[380px_1fr] gap-8">
+      <aside className="space-y-5">
+        <div className="rounded-2xl border border-[var(--color-border-1)] bg-[var(--color-surface-0)]/80 backdrop-blur-sm shadow-xl shadow-black/20">
+          <div className="p-5 space-y-4">
+            <div className="relative">
+              <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--color-text-dim)]" />
+              <input
+                ref={techSearchRef}
+                type="text"
+                value={techSearch}
+                onChange={(e) => setTechSearch(e.target.value)}
+                placeholder="Buscar tecnología..."
+                className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-[var(--color-surface-2)] border border-[var(--color-border-2)] text-base text-[var(--color-text-primary)] placeholder:text-[var(--color-text-dim)] outline-none focus:border-[var(--color-orange-500)]/50 focus:ring-2 focus:ring-[var(--color-orange-500)]/10 transition-all"
+              />
+            </div>
+            <div className="max-h-[500px] overflow-y-auto space-y-1 pr-1">
+              {filteredTechs.map((tech) => (
+                <button
+                  key={tech.id}
+                  onClick={() => setSelectedTech(tech.id)}
+                  className={cn(
+                    "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-colors",
+                    selectedTech === tech.id
+                      ? "bg-[var(--color-orange-500)]/10 border border-[var(--color-orange-500)]/30"
+                      : "hover:bg-[var(--color-surface-2)]"
+                  )}
+                >
+                  <Beaker size={18} className={selectedTech === tech.id ? "text-[var(--color-orange-400)]" : "text-[var(--color-text-tertiary)]"} />
+                  <div className="flex flex-col min-w-0">
+                    <span className={cn("text-sm font-medium", selectedTech === tech.id ? "text-[var(--color-orange-400)]" : "text-[var(--color-text-primary)]")}>
+                      {tech.name}
+                    </span>
+                    <span className="text-[10px] text-[var(--color-text-dim)]">
+                      {tech.prerequisites.length} prerequisitos
+                    </span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <main className="min-w-0">
+        {!selectedTech ? (
+          <div className="h-full flex flex-col items-center justify-center gap-5 text-[var(--color-text-dim)] py-40">
+            <div className="w-20 h-20 rounded-2xl bg-[var(--color-surface-1)] border border-[var(--color-border-1)] flex items-center justify-center shadow-lg shadow-black/30">
+              <Beaker size={32} className="text-[var(--color-text-tertiary)]" />
+            </div>
+            <div className="text-center">
+              <p className="text-sm font-medium text-[var(--color-text-secondary)]">Busca una tecnología para ver su árbol</p>
+              <p className="text-xs text-[var(--color-text-dim)] mt-1.5">Muestra todos los prerequisitos necesarios</p>
+            </div>
+          </div>
+        ) : loading ? (
+          <div className="flex items-center justify-center py-40">
+            <div className="w-6 h-6 border-2 border-[var(--color-orange-500)]/30 border-t-[var(--color-orange-500)] rounded-full animate-spin" />
+          </div>
+        ) : techTree ? (
+          <div className="space-y-4">
+            <div className="rounded-2xl border border-[var(--color-border-1)] bg-[var(--color-surface-0)]/80 backdrop-blur-sm shadow-xl shadow-black/20 p-6">
+              <h2 className="text-xl font-bold text-[var(--color-text-primary)] mb-1">{techTree.name}</h2>
+              {techTree.cost && (
+                <div className="text-sm text-[var(--color-text-secondary)] mb-4">
+                  {techTree.cost.trigger_type ? (
+                    <span>Trigger: {techTree.cost.trigger_type} {techTree.cost.item} ({techTree.cost.count})</span>
+                  ) : (
+                    <span>{techTree.cost.count} packs × {techTree.cost.time}s</span>
+                  )}
+                </div>
+              )}
+              {techTree.effects.length > 0 && (
+                <div className="mb-4">
+                  <span className="text-[11px] font-bold uppercase tracking-widest text-[var(--color-text-tertiary)]">Desbloquea</span>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {techTree.effects.map((eff: any, i: number) => (
+                      <span key={i} className="px-3 py-1 rounded-full bg-[var(--color-surface-2)] border border-[var(--color-border-1)] text-xs text-[var(--color-text-secondary)]">
+                        {eff.recipe}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+            <TechTreeNode node={techTree} />
+          </div>
+        ) : null}
+      </main>
+    </div>
+  );
+}
+
+function TechTreeNode({ node, depth = 0 }: { node: any; depth?: number }) {
+  const [expanded, setExpanded] = useState(true);
+  const hasChildren = node.children && node.children.length > 0;
+
+  return (
+    <div>
+      <div
+        className={cn(
+          "flex items-center gap-3 py-3 px-4 rounded-xl transition-all hover:bg-[var(--color-surface-2)]",
+          depth === 0 && "bg-[var(--color-surface-1)] border border-[var(--color-border-1)]"
+        )}
+        style={{ paddingLeft: `${16 + depth * 24}px` }}
+      >
+        <button
+          onClick={() => hasChildren && setExpanded(!expanded)}
+          className={cn(
+            "w-5 h-5 flex items-center justify-center rounded-md transition-all shrink-0",
+            hasChildren
+              ? "text-[var(--color-text-tertiary)] hover:text-[var(--color-orange-500)] cursor-pointer"
+              : "text-[var(--color-text-dim)] cursor-default opacity-50"
+          )}
+        >
+          {hasChildren ? (expanded ? <ChevronDown size={12} /> : <ChevronRight size={12} />) : <span className="text-[8px]">•</span>}
+        </button>
+        <Beaker size={16} className="text-[var(--color-orange-400)] shrink-0" />
+        <div className="flex flex-col min-w-0 flex-1">
+          <span className="text-sm font-medium text-[var(--color-text-primary)]">{node.name}</span>
+          {node.cost && (
+            <span className="text-[10px] text-[var(--color-text-dim)]">
+              {node.cost.trigger_type
+                ? `${node.cost.trigger_type}: ${node.cost.item} (${node.cost.count})`
+                : `${node.cost.count} packs · ${node.cost.time}s · ${node.cost.ingredients?.map((i: any) => `${i.amount} ${i.name}`).join(", ") || ""}`
+              }
+            </span>
+          )}
+        </div>
+      </div>
+      {expanded && hasChildren && (
+        <div className="relative">
+          <div
+            className="absolute top-0 bottom-2 w-px bg-gradient-to-b from-[var(--color-border-2)] to-transparent"
+            style={{ left: `${16 + depth * 24 + 10}px` }}
+          />
+          {node.children.map((child: any, idx: number) => (
+            <TechTreeNode key={idx} node={child} depth={depth + 1} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

@@ -33,11 +33,37 @@ export async function calculate(data: {
   targets: Target[];
   machine_id?: string;
   recipe_overrides?: Record<string, string>;
+  machine_overrides?: Record<string, string>;
 }): Promise<CalculationResult> {
   const res = await fetch(`${API_URL}/calculate`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
+  return res.json();
+}
+
+export interface Technology {
+  id: string;
+  name: string;
+  prerequisites: string[];
+}
+
+export async function getTechnologies(search?: string): Promise<Technology[]> {
+  const params = search ? `?search=${encodeURIComponent(search)}` : "";
+  const res = await fetch(`${API_URL}/technologies${params}`);
+  return res.json();
+}
+
+export interface TechNode {
+  id: string;
+  name: string;
+  cost: any;
+  effects: { type: string; recipe: string }[];
+  children: TechNode[];
+}
+
+export async function getTechnologyTree(techId: string): Promise<TechNode> {
+  const res = await fetch(`${API_URL}/technology-tree/${encodeURIComponent(techId)}`);
   return res.json();
 }

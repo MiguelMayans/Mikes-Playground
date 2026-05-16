@@ -81,5 +81,28 @@ def calculate():
     return jsonify(result)
 
 
+@app.route("/api/technologies")
+def get_technologies():
+    search = request.args.get("search", "").lower()
+    results = []
+    for tech in factorio_data.technologies.values():
+        if search and search not in tech["name"].lower() and search not in tech["id"].lower():
+            continue
+        results.append({
+            "id": tech["id"],
+            "name": tech["name"],
+            "prerequisites": tech["prerequisites"],
+        })
+    return jsonify(sorted(results, key=lambda t: t["name"]))
+
+
+@app.route("/api/technology-tree/<tech_id>")
+def get_technology_tree(tech_id):
+    tree = factorio_data.get_tech_tree(tech_id)
+    if not tree:
+        return jsonify({"error": "Technology not found"}), 404
+    return jsonify(tree)
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000, debug=True)
