@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from "react";
-import { calculate, getItems, getItemRecipes, getTechnologies, getTechnologyTree } from "./api";
+import { calculate, getItems, getItemRecipes, getTechnologies, getTechnologyTree, getRecipes } from "./api";
 import type { CalculationResult, Item, TreeNode } from "./types";
 import {
   Plus,
@@ -17,6 +17,7 @@ import {
   Beaker,
   Clock,
   Copy,
+  Check,
 } from "lucide-react";
 
 const API_BASE = "http://localhost:8000";
@@ -462,18 +463,28 @@ export default function App() {
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const [allExpanded, setAllExpanded] = useState(true);
   const [activeTab, setActiveTab] = useState<"ratios" | "technologies">("ratios");
+  const [recipeNames, setRecipeNames] = useState<Record<string, string>>({});
+  const [copied, setCopied] = useState(false);
+  const [itemsLoading, setItemsLoading] = useState(true);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const itemsListRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    getItems()
-      .then((data) => {
+    setItemsLoading(true);
+    Promise.all([getItems(), getRecipes()])
+      .then(([data, recipes]) => {
         setItems(data);
+        const names: Record<string, string> = {};
+        recipes.forEach((r) => {
+          names[r.id] = r.name;
+        });
+        setRecipeNames(names);
         if (data.length > 0) {
           setTargets([{ id: "1", item_id: data[0].id, rate_per_minute: 60 }]);
         }
       })
-      .catch((e) => setError(e.message));
+      .catch((e) => setError(e.message))
+      .finally(() => setItemsLoading(false));
   }, []);
 
   // Autofocus search on page load
@@ -562,7 +573,10 @@ export default function App() {
     Object.entries(result.total_machines).forEach(([name, count]) => {
       text += `  ${name}: ${count.toFixed(2)}\n`;
     });
-    navigator.clipboard.writeText(text);
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
   };
 
   const rateMultiplier = timeUnit === "sec" ? 1 / 60 : timeUnit === "hr" ? 60 : 1;
@@ -651,7 +665,15 @@ export default function App() {
         </header>
 
         {activeTab === "ratios" && (
-        <div className="max-w-[1600px] mx-auto p-8 grid grid-cols-[420px_1fr] gap-8">
+          itemsLoading ? (
+            <div className="max-w-[1600px] mx-auto p-8 flex items-center justify-center min-h-[60vh]">
+              <div className="flex flex-col items-center gap-4 text-[var(--color-text-dim)]">
+                <div className="w-10 h-10 border-2 border-[var(--color-orange-500)]/30 border-t-[var(--color-orange-500)] rounded-full animate-spin" />
+                <p className="text-sm font-medium text-[var(--color-text-secondary)]">Cargando datos de Factorio...</p>
+              </div>
+            </div>
+          ) : (
+            <div className="max-w-[1600px] mx-auto p-8 grid grid-cols-[420px_1fr] gap-8">
           {/* Sidebar */}
           <aside className="space-y-5">
             {/* Big prominent search */}
@@ -691,8 +713,20 @@ export default function App() {
                       }
                     }}
                     placeholder="Buscar item..."
-                    className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-[var(--color-surface-2)] border border-[var(--color-border-2)] text-base text-[var(--color-text-primary)] placeholder:text-[var(--color-text-dim)] outline-none focus:border-[var(--color-orange-500)]/50 focus:ring-2 focus:ring-[var(--color-orange-500)]/10 transition-all"
+                    className="w-full pl-12 pr-10 py-3.5 rounded-xl bg-[var(--color-surface-2)] border border-[var(--color-border-2)] text-base text-[var(--color-text-primary)] placeholder:text-[var(--color-text-dim)] outline-none focus:border-[var(--color-orange-500)]/50 focus:ring-2 focus:ring-[var(--color-orange-500)]/10 transition-all"
                   />
+                  {search.length > 0 && (
+                    <button
+                      onClick={() => {
+                        setSearch("");
+                        setHighlightedIndex(-1);
+                        searchInputRef.current?.focus();
+                      }}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-dim)] hover:text-white transition-colors p-1 rounded hover:bg-[var(--color-surface-3)]"
+                    >
+                      <X size={14} />
+                    </button>
+                  )}
                 </div>
 
                 {/* Items list */}
@@ -857,7 +891,7 @@ export default function App() {
                         </span>
                         <ArrowRight size={10} className="text-[var(--color-text-dim)]" />
                         <span className="text-[var(--color-orange-400)] font-medium">
-                          {recipeId}
+                          {recipeNames[recipeId] || recipeId}
                         </span>
                         <button
                           onClick={() =>
@@ -934,8 +968,17 @@ export default function App() {
                             onClick={exportResults}
                             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-surface-2)] transition-colors"
                           >
-                            <Copy size={12} />
-                            Copiar
+                            {copied ? (
+                              <>
+                                <Check size={12} className="text-[var(--color-green)]" />
+                                <span className="text-[var(--color-green)]">Copiado</span>
+                              </>
+                            ) : (
+                              <>
+                                <Copy size={12} />
+                                Copiar
+                              </>
+                            )}
                           </button>
                         </div>
                       </div>
@@ -1024,7 +1067,8 @@ export default function App() {
               </div>
             )}
           </main>
-        </div>
+            </div>
+          )
         )}
 
         {activeTab === "technologies" && (
