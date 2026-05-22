@@ -124,7 +124,8 @@ export default function App() {
   // Auto-recalculate when overrides change
   useEffect(() => {
     if (result) handleCalculate();
-  }, [recipeOverrides, machineOverrides, result, handleCalculate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [recipeOverrides, machineOverrides]);
 
   const addTarget = (itemId: string) => {
     const item = items.find((i) => i.id === itemId);
