@@ -48,6 +48,7 @@ export interface TreeNode {
   machine_speed: number;
   machine_id?: string | null;
   machine_icon?: string | null;
+  available_machines: { id: string; name: string; speed: number; icon?: string | null }[];
   children: TreeNode[];
 }
 
