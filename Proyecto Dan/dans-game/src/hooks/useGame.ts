@@ -1,6 +1,7 @@
 import { useReducer, useEffect, useCallback, useRef } from 'react';
 import type { Level } from '../utils/gameHelpers';
 import { getWordsForLevel, shuffleArray } from '../utils/gameHelpers';
+import { playCorrectNote, playWrongSound } from '../utils/sounds';
 import { gameReducer, initialState, type GameState, type Spark } from '../reducers/gameReducer';
 
 const STORAGE_KEY = 'dan-game-progress';
@@ -100,6 +101,7 @@ export function useGame() {
       if (!expected) return;
 
       if (key === expected) {
+        playCorrectNote(state.pos);
         const newSparks: Spark[] = Array.from({ length: 4 }, () => ({
           id: sparkIdRef.current++,
           letterIndex: state.pos,
@@ -110,6 +112,7 @@ export function useGame() {
           dispatch({ type: 'CLEAR_SPARKS', ids: newSparks.map(s => s.id) });
         }, 660);
       } else {
+        playWrongSound();
         dispatch({ type: 'KEY_PRESS', key });
       }
     },
